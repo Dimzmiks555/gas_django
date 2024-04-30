@@ -1,0 +1,12 @@
+{% extends 'components/base.html' %}
+
+{% block title %} ПРОГРАММА {% endblock title %}
+
+{% block content %} 
+{% include 'components/header.html'%}
+<div class="container is-fluid">
+    <section class="section">
+        {% block main %}{% endblock main %}
+    </section>
+</div>
+{% endblock content %}

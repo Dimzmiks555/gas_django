@@ -1,0 +1,276 @@
+{% extends 'components/layout.html' %}
+
+{% block main %}
+<div class="objects_page">
+    <aside class="menu objects__filters">
+        <h3 class="title is-5">Фильтры</h3>
+        <p class="menu-label">Ключевое лицо</p>
+        <div class="field">
+            <p class="control">
+              <input class="input" type="text" placeholder="Фамилия" />
+            </p>
+        </div>
+        <div class="field">
+            <p class="control">
+              <input class="input" type="text" placeholder="Имя" />
+            </p>
+        </div>
+        <div class="field">
+            <p class="control">
+              <input class="input" type="text" placeholder="Отчество" />
+            </p>
+        </div>
+        <p class="menu-label">Адрес</p>
+        <div class="field">
+            <p class="control">
+              <input class="input" type="text" placeholder="Область" />
+            </p>
+        </div>
+        <div class="field">
+            <p class="control">
+              <input class="input" type="text" placeholder="Город" />
+            </p>
+        </div>
+        <div class="field">
+            <p class="control">
+              <input class="input" type="text" placeholder="Район" />
+            </p>
+        </div>
+        <div class="field">
+            <p class="control">
+              <input class="input" type="text" placeholder="Улица" />
+            </p>
+        </div>
+        <div class="field">
+            <p class="control">
+              <input class="input" type="text" placeholder="Дом" />
+            </p>
+        </div>
+        <div class="field">
+            <p class="control">
+              <input class="input" type="text" placeholder="Квартира" />
+            </p>
+        </div>
+        <p class="menu-label">Прочее</p>
+        <div class="field">
+            <p class="control">
+              <input class="input" type="text" placeholder="Телефон" />
+            </p>
+        </div>
+        <div class="select is-fullwidth mb-4">
+            <select>
+              <option>Тип н/п</option>
+              <option>город</option>
+              <option>поселок</option>
+            </select>
+          </div>
+        <button class="button is-primary is-fullwidth">Найти</button>
+      </aside>
+      <div class="objects__list">
+        <nav class="level">
+            <!-- Left side -->
+            <div class="level-left">
+                <div>
+                    <h1 class="title">Объекты</h1>
+                    <p class="subtitle is-6"><strong>123</strong> записи</p>
+                </div>
+                <div class="level-item">
+                </div>
+            </div>
+          
+            <!-- Right side -->
+            <div class="level-right">
+              <p class="level-item"><a class="button is-primary">Добавить</a></p>
+            </div>
+          </nav>
+          <table class="table is-bordered is-striped is-fullwidth is-hoverable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Ключевое лицо</th>
+                <th>Дата договора</th>
+                <th>Адрес объекта</th>
+                <th>Номер телефона</th>
+                <th>Тип оборудования</th>   
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>1</th>
+                <td>
+                  <a
+                    href="https://en.wikipedia.org/wiki/Leicester_City_F.C."
+                    title="Leicester City F.C."
+                    >Leicester City</a
+                  >
+                  <strong>(C)</strong>
+                </td>
+                <td>38</td>
+                <td>23</td>
+                <td>12</td>
+                <td>3</td>
+              </tr>
+              <tr>
+                <th>2</th>
+                <td>
+                  <a
+                    href="https://en.wikipedia.org/wiki/Arsenal_F.C."
+                    title="Arsenal F.C."
+                    >Arsenal</a
+                  >
+                </td>
+                <td>38</td>
+                <td>20</td>
+                <td>11</td>
+                <td>7</td>
+              </tr>
+              <tr>
+                <th>3</th>
+                <td>
+                  <a
+                    href="https://en.wikipedia.org/wiki/Tottenham_Hotspur_F.C."
+                    title="Tottenham Hotspur F.C."
+                    >Tottenham Hotspur</a
+                  >
+                </td>
+                <td>38</td>
+                <td>19</td>
+                <td>13</td>
+                <td>6</td>
+              </tr>
+              <tr>
+                <th>4</th>
+                <td>
+                  <a
+                    href="https://en.wikipedia.org/wiki/Manchester_City_F.C."
+                    title="Manchester City F.C."
+                    >Manchester City</a
+                  >
+                </td>
+                <td>38</td>
+                <td>19</td>
+                <td>9</td>
+                <td>10</td>
+              </tr>
+              <tr>
+                <th>5</th>
+                <td>
+                  <a
+                    href="https://en.wikipedia.org/wiki/Manchester_United_F.C."
+                    title="Manchester United F.C."
+                    >Manchester United</a
+                  >
+                </td>
+                <td>38</td>
+                <td>19</td>
+                <td>9</td>
+                <td>10</td>
+              </tr>
+              <tr>
+                <th>6</th>
+                <td>
+                  <a
+                    href="https://en.wikipedia.org/wiki/Southampton_F.C."
+                    title="Southampton F.C."
+                    >Southampton</a
+                  >
+                </td>
+                <td>38</td>
+                <td>18</td>
+                <td>9</td>
+                <td>11</td>
+              </tr>
+              <tr>
+                <th>7</th>
+                <td>
+                  <a
+                    href="https://en.wikipedia.org/wiki/West_Ham_United_F.C."
+                    title="West Ham United F.C."
+                    >West Ham United</a
+                  >
+                </td>
+                <td>38</td>
+                <td>16</td>
+                <td>14</td>
+                <td>8</td>
+              </tr>
+              <tr>
+                <th>8</th>
+                <td>
+                  <a
+                    href="https://en.wikipedia.org/wiki/Liverpool_F.C."
+                    title="Liverpool F.C."
+                    >Liverpool</a
+                  >
+                </td>
+                <td>38</td>
+                <td>16</td>
+                <td>12</td>
+                <td>10</td>
+              </tr>
+              <tr>
+                <th>9</th>
+                <td>
+                  <a
+                    href="https://en.wikipedia.org/wiki/Stoke_City_F.C."
+                    title="Stoke City F.C."
+                    >Stoke City</a
+                  >
+                </td>
+                <td>38</td>
+                <td>14</td>
+                <td>9</td>
+                <td>15</td>
+              </tr>
+              <tr>
+                <th>10</th>
+                <td>
+                </td>
+                <td>38</td>
+                <td>12</td>
+                <td>14</td>
+                <td>12</td>
+              </tr>
+              <tr>
+                <th>11</th>
+                <td>
+                </td>
+                <td>38</td>
+                <td>11</td>
+                <td>14</td>
+                <td>13</td>
+              </tr>
+              <tr>
+                <th>12</th>
+                <td>
+                </td>
+                <td>38</td>
+                <td>12</td>
+                <td>11</td>
+                <td>15</td>
+              </tr>
+            </tbody>
+          </table>
+          <nav class="pagination is-rounded" role="navigation" aria-label="pagination">
+            <a href="#" class="pagination-previous">Назад</a>
+            <a href="#" class="pagination-next">Дальше</a>
+            <ul class="pagination-list">
+              <li><a href="#" class="pagination-link" aria-label="Goto page 1">1</a></li>
+              <li><span class="pagination-ellipsis">&hellip;</span></li>
+              <li><a href="#" class="pagination-link" aria-label="Goto page 45">45</a></li>
+              <li>
+                <a
+                  class="pagination-link is-current"
+                  aria-label="Page 46"
+                  aria-current="page"
+                  >46</a
+                >
+              </li>
+              <li><a href="#" class="pagination-link" aria-label="Goto page 47">47</a></li>
+              <li><span class="pagination-ellipsis">&hellip;</span></li>
+              <li><a href="#" class="pagination-link" aria-label="Goto page 86">86</a></li>
+            </ul>
+          </nav>
+      </div>
+</div>
+{% endblock main %}

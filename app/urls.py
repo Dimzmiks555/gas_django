@@ -16,7 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from gas.views import LoginView, ObjectCreateView, ObjectEditView, ObjectListView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("", LoginView.as_view()),
+    path("objects/", ObjectListView.as_view()),
+    path("objects/<int:id>", ObjectEditView.as_view()),
+    path("objects/create/", ObjectCreateView.as_view()),
 ]
