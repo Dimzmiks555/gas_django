@@ -87,168 +87,37 @@
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Адрес объекта</th>
                 <th>Ключевое лицо</th>
                 <th>Дата договора</th>
-                <th>Адрес объекта</th>
                 <th>Номер телефона</th>
                 <th>Тип оборудования</th>   
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th>1</th>
-                <td>
-                  <a
-                    href="https://en.wikipedia.org/wiki/Leicester_City_F.C."
-                    title="Leicester City F.C."
-                    >Leicester City</a
-                  >
-                  <strong>(C)</strong>
-                </td>
-                <td>38</td>
-                <td>23</td>
-                <td>12</td>
-                <td>3</td>
-              </tr>
-              <tr>
-                <th>2</th>
-                <td>
-                  <a
-                    href="https://en.wikipedia.org/wiki/Arsenal_F.C."
-                    title="Arsenal F.C."
-                    >Arsenal</a
-                  >
-                </td>
-                <td>38</td>
-                <td>20</td>
-                <td>11</td>
-                <td>7</td>
-              </tr>
-              <tr>
-                <th>3</th>
-                <td>
-                  <a
-                    href="https://en.wikipedia.org/wiki/Tottenham_Hotspur_F.C."
-                    title="Tottenham Hotspur F.C."
-                    >Tottenham Hotspur</a
-                  >
-                </td>
-                <td>38</td>
-                <td>19</td>
-                <td>13</td>
-                <td>6</td>
-              </tr>
-              <tr>
-                <th>4</th>
-                <td>
-                  <a
-                    href="https://en.wikipedia.org/wiki/Manchester_City_F.C."
-                    title="Manchester City F.C."
-                    >Manchester City</a
-                  >
-                </td>
-                <td>38</td>
-                <td>19</td>
-                <td>9</td>
-                <td>10</td>
-              </tr>
-              <tr>
-                <th>5</th>
-                <td>
-                  <a
-                    href="https://en.wikipedia.org/wiki/Manchester_United_F.C."
-                    title="Manchester United F.C."
-                    >Manchester United</a
-                  >
-                </td>
-                <td>38</td>
-                <td>19</td>
-                <td>9</td>
-                <td>10</td>
-              </tr>
-              <tr>
-                <th>6</th>
-                <td>
-                  <a
-                    href="https://en.wikipedia.org/wiki/Southampton_F.C."
-                    title="Southampton F.C."
-                    >Southampton</a
-                  >
-                </td>
-                <td>38</td>
-                <td>18</td>
-                <td>9</td>
-                <td>11</td>
-              </tr>
-              <tr>
-                <th>7</th>
-                <td>
-                  <a
-                    href="https://en.wikipedia.org/wiki/West_Ham_United_F.C."
-                    title="West Ham United F.C."
-                    >West Ham United</a
-                  >
-                </td>
-                <td>38</td>
-                <td>16</td>
-                <td>14</td>
-                <td>8</td>
-              </tr>
-              <tr>
-                <th>8</th>
-                <td>
-                  <a
-                    href="https://en.wikipedia.org/wiki/Liverpool_F.C."
-                    title="Liverpool F.C."
-                    >Liverpool</a
-                  >
-                </td>
-                <td>38</td>
-                <td>16</td>
-                <td>12</td>
-                <td>10</td>
-              </tr>
-              <tr>
-                <th>9</th>
-                <td>
-                  <a
-                    href="https://en.wikipedia.org/wiki/Stoke_City_F.C."
-                    title="Stoke City F.C."
-                    >Stoke City</a
-                  >
-                </td>
-                <td>38</td>
-                <td>14</td>
-                <td>9</td>
-                <td>15</td>
-              </tr>
-              <tr>
-                <th>10</th>
-                <td>
-                </td>
-                <td>38</td>
-                <td>12</td>
-                <td>14</td>
-                <td>12</td>
-              </tr>
-              <tr>
-                <th>11</th>
-                <td>
-                </td>
-                <td>38</td>
-                <td>11</td>
-                <td>14</td>
-                <td>13</td>
-              </tr>
-              <tr>
-                <th>12</th>
-                <td>
-                </td>
-                <td>38</td>
-                <td>12</td>
-                <td>11</td>
-                <td>15</td>
-              </tr>
+              {% for object in object_list %}
+                <tr>
+                  <th>{{object.id}}</th>
+                  <td>
+                    <a href="/objects/{{object.id}}">{{object.type_of_city}}</a>
+                  </td>
+                  <td>
+                    {% for client in object.client_set.all %}
+                      {{client.firstname}} {{client.lastname}} {{client.middlename}}
+                    {% endfor %} 
+                  </td>
+                  <td></td>
+                  <td>
+                    {% for client in object.client_set.all %}
+                      {% for phone in client.phone_set.all %}
+                        {{phone.number}}<br>
+                      {% endfor %} 
+                    {% endfor %} 
+                  </td>
+                  <td></td>
+                </tr>
+              {% endfor %}
+              
             </tbody>
           </table>
           <nav class="pagination is-rounded" role="navigation" aria-label="pagination">

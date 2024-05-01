@@ -4,20 +4,30 @@
     <div class="columns">
         <div class="column">
             <div class="box">
-                <h2 class="title is-3">Объект № 34 <span class="tag is-success is-medium">Хороший клиент</span></h2>
+                <h2 class="title is-3">Объект № {{object.id}} <span class="tag is-success is-medium">Хороший клиент</span></h2>
                 <p class="title is-5">Тип объекта</p>
-                <h2 class="subtitle is-6 is-spaced">Квартира</h2>
+                <h2 class="subtitle is-6 is-spaced">{{object.type_of_building}}</h2>
                 <p class="title is-5">Адрес</p>
-                <h2 class="subtitle is-6 is-spaced">улица Титова, Лиски, Воронежская область, д. 26</h2>
+                <h2 class="subtitle is-6 is-spaced">{{object.get_full_address}}</h2>
                 <p class="title is-5 ">Примечание</p>
-                <h2 class="subtitle is-6 is-spaced">Отсутствует</h2>
+                <h2 class="subtitle is-6 is-spaced">
+                    {% if object.comment%}
+                    {{object.comment}}
+                    {% else %}
+                    Примечаний нет
+                    {% endif %}
+                </h2>
             </div>
             <div class="box">
                 <h2 class="title">Контактные лица</h2>
-                <p>Собственник</p>
-                <p class="title is-5 ">Афанасьев Николай Дмитриевич <span class="tag is-info ">М</span></p>
-                <h2 class="subtitle is-3">89531199120</h2>
-                <button class="button">Добавить</button>
+                {% for client in object.client_set.all %}
+                    <p>{{client.role}}</p>
+                    <p class="title is-5 ">{{client.firstname}} {{client.lastname}} {{client.middlename}} <span class="tag is-info ">{{client.sex}}</span></p>
+                    {% for phone in client.phone_set.all %}
+                        <h2 class="subtitle is-3">{{phone.number}}</h2>
+                    {% endfor %}
+                {% endfor %}
+                {% comment %} <button class="button">Добавить</button> {% endcomment %}
             </div>
         </div>
         <div class="column">
@@ -25,17 +35,17 @@
                 <h2 class="title">Паспортные данные</h2>
                 
                 <p class="title is-5 ">Серия и номер</p>
-                <h2 class="subtitle is-6 is-spaced">Отсутствует</h2>
+                <h2 class="subtitle is-6 is-spaced">{{object.passport.serial}} {{object.passport.number}}</h2>
                 <p class="title is-5 ">Выдан</p>
-                <h2 class="subtitle is-6 is-spaced">Отсутствует</h2>
+                <h2 class="subtitle is-6 is-spaced">{{object.passport.getted_by}}</h2>
                 <p class="title is-5 ">Дата выдачи</p>
-                <h2 class="subtitle is-6 is-spaced">Отсутствует</h2>
+                <h2 class="subtitle is-6 is-spaced">{{object.passport.getted_date}}</h2>
                 <p class="title is-5 ">Место рождения</p>
-                <h2 class="subtitle is-6 is-spaced">Отсутствует</h2>
+                <h2 class="subtitle is-6 is-spaced">{{object.passport.birthday_place}}</h2>
                 <p class="title is-5 ">Дата рождения</p>
-                <h2 class="subtitle is-6 is-spaced">Отсутствует</h2>
+                <h2 class="subtitle is-6 is-spaced">{{object.passport.birthday_date}}</h2>
                 <p class="title is-5 ">Адрес регистрации</p>
-                <h2 class="subtitle is-6 is-spaced">Отсутствует</h2>
+                <h2 class="subtitle is-6 is-spaced">{{object.passport.registration_adress}}</h2>
             </div>
         </div>
         <div class="column">
@@ -49,11 +59,23 @@
                 <p>Отсутствует</p>
                 <button class="button mt-4" disabled>Добавить</button>
             </div>
-            <div class="box">
+            {% comment %} <div class="box">
                 <h2 class="title">Заявки</h2>
                 <p>Отсутствует</p>
                 <button class="button mt-4" disabled>Добавить</button>
+            </div> {% endcomment %}
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column">
+            <div class="box">
+                <h2 class="title">Оборудование</h2>
+                
+                <p class="title is-5 ">Газовый котел</p>
+                <h2 class="subtitle is-6 is-spaced">{{object.passport.serial}} {{object.passport.number}}</h2>
             </div>
+        </div>
+        <div class="column">
         </div>
     </div>
 {% endblock main %}

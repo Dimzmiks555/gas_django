@@ -1,18 +1,25 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView, DetailView
+from .models import Object
 
 
 class LoginView(TemplateView):
     template_name = "login.html"
 
 
-
-
-class ObjectListView(TemplateView):
+class ObjectListView(ListView):
     template_name = "app/object/list.html"
+    model = Object
+
+    def get_queryset(self):
+        return Object.objects.filter()
+
+
 
 class ObjectCreateView(TemplateView):
     template_name = "app/object/create.html"
 
-class ObjectEditView(TemplateView):
+class ObjectEditView(DetailView):
+    model = Object
+    pk_url_kwarg = 'id'
     template_name = "app/object/edit.html"
