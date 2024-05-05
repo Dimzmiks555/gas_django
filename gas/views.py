@@ -1,9 +1,12 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, DetailView
 from .models import Object
+from .forms import LoginUserForm
+from django.contrib.auth.views import LoginView
 
 
-class LoginView(TemplateView):
+class Login(LoginView):
+    form_class = LoginUserForm
     template_name = "login.html"
 
 

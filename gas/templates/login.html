@@ -10,20 +10,31 @@
                 <div class="columns is-centered">
                     <div class="column is-5 is-4-desktop">
                         <h2 class="title">Авторизация</h2>
-                        <form>
-                        <div class="field">
-                            <div class="control">
-                                <input class="input" placeholder="Email">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-error mb-4">{{ form.non_field_errors }}</div>
+                            {% for f in form %}
+                            
+                            <div class="field">
+                                <div class="control">
+                                    {{ f }}
+                                </div>
                             </div>
-                        </div>
-                        <div class="field">
-                            <div class="control">
-                                <input class="input" type="password" placeholder="Password">
+                            <div class="form-error">{{ f.errors }}</div>
+                            {% endfor %}
+                            <!-- <div class="field">
+                                <div class="control">
+                                    <input class="input" placeholder="Email">
+                                </div>
                             </div>
-                        </div>
-                        <div class="field">
-                            <button class="button is-primary is-fullwidth">Войти</button>
-                        </div>
+                            <div class="field">
+                                <div class="control">
+                                    <input class="input" type="password" placeholder="Password">
+                                </div>
+                            </div> -->
+                            <div class="field">
+                                <button class="button is-primary is-fullwidth" type="submit">Войти</button>
+                            </div>
                         </form>
                     </div>
                 </div>
