@@ -72,7 +72,7 @@
             <div class="level-left">
                 <div>
                     <h1 class="title">Объекты</h1>
-                    <p class="subtitle is-6"><strong>123</strong> записи</p>
+                    <p class="subtitle is-6"><strong>{{total}}</strong> записей</p>
                 </div>
                 <div class="level-item">
                 </div>
@@ -80,7 +80,7 @@
           
             <!-- Right side -->
             <div class="level-right">
-              <p class="level-item"><a class="button is-primary">Добавить</a></p>
+              <p class="level-item"><a href="/objects/create" class="button is-primary">Добавить</a></p>
             </div>
           </nav>
           <table class="table is-bordered is-striped is-fullwidth is-hoverable">
@@ -99,7 +99,7 @@
                 <tr>
                   <th>{{object.id}}</th>
                   <td>
-                    <a href="/objects/{{object.id}}">{{object.type_of_city}}</a>
+                    <a href="/objects/{{object.id}}">{{object.get_full_address}}</a>
                   </td>
                   <td>
                     {% for client in object.client_set.all %}
@@ -120,7 +120,7 @@
               
             </tbody>
           </table>
-          <nav class="pagination is-rounded" role="navigation" aria-label="pagination">
+          <!-- <nav class="pagination is-rounded" role="navigation" aria-label="pagination">
             <a href="#" class="pagination-previous">Назад</a>
             <a href="#" class="pagination-next">Дальше</a>
             <ul class="pagination-list">
@@ -139,7 +139,7 @@
               <li><span class="pagination-ellipsis">&hellip;</span></li>
               <li><a href="#" class="pagination-link" aria-label="Goto page 86">86</a></li>
             </ul>
-          </nav>
+          </nav> -->
       </div>
 </div>
 {% endblock main %}

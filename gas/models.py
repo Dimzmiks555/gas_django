@@ -13,36 +13,36 @@ class Passport(models.Model):
     registration_adress = models.CharField(max_length=255, verbose_name="Адрес регистрации")
 
 
-
-class Object(models.Model):
-    comment = models.TextField(verbose_name="Примечание", blank=True)
-    type_of_building = models.CharField(max_length=255, verbose_name="Тип домовладения")
-    type_of_city = models.CharField(max_length=255, verbose_name="Тип населенного пункта")
-    region = models.CharField(max_length=255, verbose_name="Область")
-    street_type = models.CharField(max_length=255, verbose_name="Тип улицы")
-    area = models.CharField(max_length=255, verbose_name="Район")
-    city = models.CharField(max_length=255, verbose_name="Город")
-    street = models.CharField(max_length=255, verbose_name="Улица")
-    house = models.CharField(max_length=255, verbose_name="Дом")
-    room = models.CharField(max_length=255, verbose_name="Квартира или часть дома", blank=True)
-    postcode = models.CharField(max_length=50, verbose_name="Индекс", blank=True)
-    passport = models.OneToOneField(Passport, on_delete = models.CASCADE)
-    show_part = models.BooleanField(verbose_name="Отображать часть дома/квартиру в документах", blank=True, null=True)
-    gas_date = models.DateField(verbose_name="Дата пуска газа", blank=True, null=True)
-
-    def get_full_address(self):
-        address = f'{self.type_of_city} {self.city}, {self.street_type} {self.street}, д. {self.house} {self.room}'
-        return address
-
-
 class Client(models.Model):
-    object = models.ForeignKey(Object, on_delete = models.CASCADE, blank=True, null=True)
     firstname = models.CharField(max_length=256, verbose_name="Имя")
     lastname = models.CharField(max_length=256, verbose_name="Фамилия")
     middlename = models.CharField(max_length=256, verbose_name="Отчество")
     is_main = models.BooleanField(verbose_name="Главный?")
     role = models.CharField(max_length=256, verbose_name="Роль")
     sex = models.CharField(max_length=20, verbose_name="Пол")
+
+class Object(models.Model):
+    type_of_building = models.CharField(max_length=255, verbose_name="Тип домовладения")
+    region = models.CharField(max_length=255, verbose_name="Область")
+    area = models.CharField(max_length=255, verbose_name="Район")
+    type_of_city = models.CharField(max_length=255, verbose_name="Тип населенного пункта")
+    city = models.CharField(max_length=255, verbose_name="Город")
+    street_type = models.CharField(max_length=255, verbose_name="Тип улицы")
+    street = models.CharField(max_length=255, verbose_name="Улица")
+    house = models.CharField(max_length=255, verbose_name="Дом")
+    room = models.CharField(max_length=255, verbose_name="Квартира или часть дома", blank=True)
+    postcode = models.CharField(max_length=50, verbose_name="Индекс", blank=True)
+    show_part = models.BooleanField(verbose_name="Отображать часть дома/квартиру в документах", blank=True, null=True)
+    passport = models.ForeignKey(Passport, on_delete = models.CASCADE)
+    gas_date = models.DateField(verbose_name="Дата пуска газа", blank=True, null=True)
+    comment = models.TextField(verbose_name="Примечание", blank=True)
+    clients = models.ManyToManyField(to=Client, verbose_name='Клиенты')
+
+    def get_full_address(self):
+        address = f'{self.type_of_city} {self.city}, {self.street_type} {self.street}, д. {self.house} {self.room}'
+        return address
+
+
     
     
 class Phone(models.Model):
