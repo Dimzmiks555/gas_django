@@ -25,7 +25,14 @@ class ObjectListView(LoginRequiredMixin, ListView):
 
 class ObjectCreateView(LoginRequiredMixin, CreateView):
     template_name = "app/object/create.html"
-    form_class = ObjectCreateForm
+    extra_context = {
+        'object_form': ObjectCreateForm,
+        'passport_form': PassportCreateForm,
+    }
+
+    def post():
+        
+
 
 class ObjectEditView(LoginRequiredMixin, DetailView):
     model = Object
