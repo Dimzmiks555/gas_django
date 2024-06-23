@@ -1,0 +1,16 @@
+{% extends 'components/layout.html' %}
+
+{% block main %}
+<a href="/objects" class="button mb-4">Назад</a>
+    
+<form class="object_create_form" action="/objects/{{id}}/contract/create" method="post">
+    {% csrf_token %}
+    <div class="object_create_form_section">
+        <div class="object_create_form_box">
+            <h3 class="title is-3">Новый договор для объекта № {{id}}</h3>
+            {{contract_form}}
+            <button class="button" type="submit">Создать</button>
+        </div>
+    </div>
+</form>
+{% endblock main %}

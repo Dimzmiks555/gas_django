@@ -19,7 +19,14 @@
     min-width: 240px;
 }
 
+
 .object_create_form {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+.object_create_form_section {
     display: flex;
     gap: 40px;
 }
@@ -28,13 +35,19 @@
     min-width: 50%;
 }
 
+.object_create_form_helpers {
+    min-width: 50%;
+}
+
 .object_create_form_box > div {
     margin-bottom: 20px;
     display: flex;
     align-items: center;
+    gap: 20px;
 }
 .object_create_form_box > div label {
-    min-width: 200px;
+    min-width: 240px;
+    width: 240px;
 }
 
 .object_create_form_box > div fieldset {
@@ -92,4 +105,14 @@
 }
 .helper_result:hover {
     background: #ddd;
+}
+
+.device_add {
+    max-width: 40% !important;
+    min-width: 40% !important;
+}
+
+.device_section {
+    column-gap: 80px;
+    flex-wrap: wrap;
 }

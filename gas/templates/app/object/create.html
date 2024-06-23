@@ -4,24 +4,52 @@
 <a href="/objects" class="button mb-4">Назад</a>
     
 <div class="object_create_form">
-    <div class="object_create_form_box">
-        <h3 class="title is-3">Объект</h3>
-        {{object_form}}
-        <h3 class="title is-3">Данные клиента</h3>
-        {{client_form}}
-        {{phone_form}}
-        <h3 class="title is-3">Паспортные данные</h3>
-        {{passport_form}}
-    </div>
-    <div class="object_create_form_helpers">
-        <h3 class="title is-3">Автозаполнение</h3>
-        <h4 class="title is-5">Адрес объекта</h4>
-        <input class="object_address_helper helper" placeholder="Автозаполнение адреса объекта">
-        <div class="object_address_helper_results">
+    <form action="/objects/create/" method="post">
+        {% csrf_token %}
+        <div class="object_create_form_section">
+            <div class="object_create_form_box">
+                <h3 class="title is-3">Объект</h3>
+                {{object_form}}
+                <h3 class="title is-3">Данные клиента</h3>
+                {{client_form}}
+                {{phone_form}}
+            </div>
+            <div class="object_create_form_helpers">
+                <h3 class="title is-3">Автозаполнение</h3>
+                <h4 class="title is-5">Адрес объекта</h4>
+                <input class="object_address_helper helper" placeholder="Автозаполнение адреса объекта">
+                <div class="object_address_helper_results"></div>
+            </div>
         </div>
-        <h4 class="title is-5">Адрес регистрации</h4>
-        <input class="reg_address_helper helper" placeholder="Автозаполнение адреса регистрации">
-        <div class="reg_address_helper_results">
-    </div>
+        <div class="object_create_form_section">
+            <div class="object_create_form_box">
+                <h3 class="title is-3">Паспортные данные</h3>
+                {{passport_form}}
+            </div>
+            <div class="object_create_form_helpers">
+                <h3 class="title is-3">Автозаполнение</h3>
+                <h4 class="title is-5">Адрес регистрации</h4>
+                <input class="reg_address_helper helper" placeholder="Автозаполнение адреса регистрации">
+                <div class="reg_address_helper_results"></div>
+            </div>
+        </div>
+        
+
+        <h3 class="title is-3">Оборудование</h3>
+
+        <div class="object_create_form_section device_section">
+            {{device_formset.management_form}}
+                {% for form in device_formset %}
+                <div class="object_create_form_box device_add">
+                    <h3 class="title is-5">Оборудование № <span>1</span></h3>
+                    {{form}}
+                </div>
+            {% endfor %}
+        </div>
+        
+        <button class="button mb-5" id="more_device" type="button">Добавить еще</button><br>
+        <button class="button" type="submit">Создать</button>
+
+    </form>
 </div>
 {% endblock main %}

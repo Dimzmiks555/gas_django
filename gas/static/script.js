@@ -60,7 +60,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let objectResultsBlock = document.querySelector('.object_address_helper_results')
     let regAddressResultsBlock = document.querySelector('.reg_address_helper_results')
 
-    maskPhone('#id_number')
+    let moreDeviceButton = document.querySelector('#more_device')
+    let deviceSection = document.querySelector('.device_section')
+    let deviceForms = document.querySelectorAll('.device_add')
+    let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
+    let formNum = deviceForms.length-1
+
+    if (!window.location.href.includes('contract')) {
+        maskPhone('#id_phone_number')
+    }
 
     function cleanResults() {
         objectResultsBlock.innerHTML = ""
@@ -159,5 +167,26 @@ document.addEventListener("DOMContentLoaded", () => {
         let results = await getAddressFromDaData(e.target.value)
         renderResults(results?.suggestions, 'REG')
     })
+
+    function addDevice(e) {
+        e.preventDefault()
+
+        let clone = deviceForms[0].cloneNode(true)
+        let formRegex = RegExp(`form-(\\d){1}-`,'g')
+        formNum++
+
+        clone.querySelector('span').innerHTML = formNum + 1
+        clone.innerHTML = clone.innerHTML.replace(formRegex, `form-${formNum}-`)
+        
+        deviceSection.appendChild(clone);
+        
+        totalForms.setAttribute('value', `${formNum+1}`)
+
+
+
+    }
+
+    moreDeviceButton.addEventListener('click', addDevice)
+
 
 });

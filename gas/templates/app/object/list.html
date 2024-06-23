@@ -110,11 +110,15 @@
                   <td>
                     {% for client in object.client_set.all %}
                       {% for phone in client.phone_set.all %}
-                        {{phone.number}}<br>
+                        {{phone.phone_number}}<br>
                       {% endfor %} 
                     {% endfor %} 
                   </td>
-                  <td></td>
+                  <td>
+                    {% for device in object.objectdevice_set.all %}
+                      {{device.type}} {{device.model}}<br> 
+                    {% endfor %} 
+                  </td>
                 </tr>
               {% endfor %}
               

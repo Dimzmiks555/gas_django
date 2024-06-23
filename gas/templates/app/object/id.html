@@ -25,7 +25,7 @@
                     <p>{{client.role}}</p>
                     <p class="title is-5 ">{{client.firstname}} {{client.lastname}} {{client.middlename}} <span class="tag is-info ">{{client.sex}}</span></p>
                     {% for phone in client.phone_set.all %}
-                        <h2 class="subtitle is-3">{{phone.number}}</h2>
+                        <h2 class="subtitle is-3">{{phone.phone_number}}</h2>
                     {% endfor %}
                 {% endfor %}
                 {% comment %} <button class="button">Добавить</button> {% endcomment %}
@@ -52,8 +52,19 @@
         <div class="column">
             <div class="box">
                 <h2 class="title">Договор ТО</h2>
+                
+                {% if object.contract_set.count > 0 %}
+                    {% for contract in object.contract_set.all %}
+                        <p class="title is-5 ">Договор № {{contract.contract_number}}</p>
+                        <h2 class="subtitle is-5 is-spaced">{{contract.date}}</h2>
+                        <p class="subtitle is-5">Сумма {{contract.summ}}</p>
+                        {% if contract.status != 'active' %}
+                            <a href="/objects/{{object.id}}/contract/create" class="button mt-2">Добавить</a>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
                 <p>Отсутствует</p>
-                <button class="button mt-4">Добавить</button>
+                {% endif %}
             </div>
             <div class="box">
                 <h2 class="title">Акты выполненных работ</h2>
@@ -71,9 +82,10 @@
         <div class="column">
             <div class="box">
                 <h2 class="title">Оборудование</h2>
-                
-                <p class="title is-5 ">Газовый котел</p>
-                <h2 class="subtitle is-6 is-spaced">{{object.passport.serial}} {{object.passport.number}}</h2>
+                {% for device in object.objectdevice_set.all %}
+                    <p class="title is-5 ">{{device.type}}</p>
+                    <h2 class="subtitle is-6 is-spaced">{{device.model}}</h2>
+                {% endfor %}
             </div>
         </div>
         <div class="column">
