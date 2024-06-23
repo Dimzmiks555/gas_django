@@ -18,3 +18,78 @@
 .objects__filters {
     min-width: 240px;
 }
+
+.object_create_form {
+    display: flex;
+    gap: 40px;
+}
+
+.object_create_form_box {
+    min-width: 50%;
+}
+
+.object_create_form_box > div {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}
+.object_create_form_box > div label {
+    min-width: 200px;
+}
+
+.object_create_form_box > div fieldset {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+.object_create_form_box > div fieldset legend {
+    width: 100%;
+    margin-bottom: 10px;
+}
+.object_create_form_box > div fieldset select {
+    min-width: 30%;
+}
+
+.object_create_form_box > div input {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    width: 100%;
+}
+.object_create_form_box > div textarea {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    width: 100%;
+    resize: none;
+}
+.object_create_form_box > div select {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    width: 100%;
+}
+
+.helper {
+    margin-bottom: 20px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    width: 600px;
+}
+
+.object_address_helper_results {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 20px;
+} 
+
+.helper_result {
+    border-radius: 4px;
+    padding: 4px 20px;
+    cursor: pointer;
+}
+.helper_result:hover {
+    background: #ddd;
+}

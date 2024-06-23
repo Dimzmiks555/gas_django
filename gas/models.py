@@ -2,6 +2,16 @@ from django.db import models
 
 # Create your models here.
 
+TYPE_OF_BUILDING__CHOICES = ({
+    "Дом": "Дом",
+    "Квартира": "Квартира",
+})
+
+
+TYPE_OF_MALE = ({
+    "woman": "Женский",
+    "man": "Мужской",
+})
 
 class Passport(models.Model):
     serial = models.CharField(max_length=12, verbose_name="Серия")
@@ -17,12 +27,12 @@ class Client(models.Model):
     firstname = models.CharField(max_length=256, verbose_name="Имя")
     lastname = models.CharField(max_length=256, verbose_name="Фамилия")
     middlename = models.CharField(max_length=256, verbose_name="Отчество")
-    is_main = models.BooleanField(verbose_name="Главный?")
-    role = models.CharField(max_length=256, verbose_name="Роль")
-    sex = models.CharField(max_length=20, verbose_name="Пол")
+    is_main = models.BooleanField(verbose_name="Ответственное лицо?", default=True)
+    role = models.CharField(max_length=256, verbose_name="Роль", default='Собственник')
+    sex = models.CharField(max_length=20, verbose_name="Пол", choices=TYPE_OF_MALE)
 
 class Object(models.Model):
-    type_of_building = models.CharField(max_length=255, verbose_name="Тип домовладения")
+    type_of_building = models.CharField(max_length=255, verbose_name="Тип домовладения", choices=TYPE_OF_BUILDING__CHOICES)
     region = models.CharField(max_length=255, verbose_name="Область")
     area = models.CharField(max_length=255, verbose_name="Район")
     type_of_city = models.CharField(max_length=255, verbose_name="Тип населенного пункта")

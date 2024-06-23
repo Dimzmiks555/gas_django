@@ -1,9 +1,13 @@
 from django.shortcuts import render
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import CreateView, ListView, DetailView, View, TemplateView
 from .models import Object
-from .forms import LoginUserForm, ObjectCreateForm
+from .forms import LoginUserForm, ObjectCreateForm, PassportCreateForm, ClientCreateForm, PhoneCreateForm
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
+import datetime
+
+
 
 
 
@@ -11,6 +15,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 class Login(LoginView):
     form_class = LoginUserForm
     template_name = "login.html"
+
+def Index(request):
+    return redirect('/objects')
 
 class ObjectListView(LoginRequiredMixin, ListView):
     template_name = "app/object/list.html"
@@ -23,14 +30,17 @@ class ObjectListView(LoginRequiredMixin, ListView):
         return Object.objects.filter()
 
 
-class ObjectCreateView(LoginRequiredMixin, CreateView):
+class ObjectCreateView(LoginRequiredMixin, TemplateView):
     template_name = "app/object/create.html"
     extra_context = {
         'object_form': ObjectCreateForm,
         'passport_form': PassportCreateForm,
+        'phone_form': PhoneCreateForm,
+        'client_form' : ClientCreateForm
     }
 
     def post():
+        pass
         
 
 
