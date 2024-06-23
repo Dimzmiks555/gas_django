@@ -141,7 +141,8 @@ class ContractCreateView(LoginRequiredMixin, TemplateView):
 
         current_object = Object.objects.filter(pk=id)
 
-        client = Client.objects.filter(object=id, role="Собственник")
+        # client = Client.objects.filter(object=id, role="Собственник")
+        client = Client.objects.filter(object=id)
 
 
         contract_data = request.POST.dict()

@@ -58,13 +58,16 @@
                         <p class="title is-5 ">Договор № {{contract.contract_number}}</p>
                         <h2 class="subtitle is-5 is-spaced">{{contract.date}}</h2>
                         <p class="subtitle is-5">Сумма {{contract.summ}}</p>
-                        {% if contract.status != 'active' %}
+                        <!-- {% if contract.status != 'active' %}
                             <a href="/objects/{{object.id}}/contract/create" class="button mt-2">Добавить</a>
-                        {% endif %}
+                        {% endif %} -->
+
                     {% endfor %}
                 {% else %}
                 <p>Отсутствует</p>
                 {% endif %}
+                <a href="/objects/{{object.id}}/contract/create" class="button mt-2">Добавить</a>
+
             </div>
             <div class="box">
                 <h2 class="title">Акты выполненных работ</h2>
