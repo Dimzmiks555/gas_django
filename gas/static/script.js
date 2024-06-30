@@ -189,4 +189,32 @@ document.addEventListener("DOMContentLoaded", () => {
     moreDeviceButton.addEventListener('click', addDevice)
 
 
+    
+    let moreClientButton = document.querySelector('#more_client')
+    let clientSection = document.querySelector('.client_section')
+    let clientForms = document.querySelectorAll('.client_add')
+    let clientTotalForms = document.querySelector("#id_client-TOTAL_FORMS")
+    let clientFormNum = clientForms.length-1
+    
+    function addClient(e) {
+        e.preventDefault()
+
+        let clone = clientForms[0].cloneNode(true)
+        let formRegex = RegExp(`client-(\\d){1}-`,'g')
+        clientFormNum++
+
+        // clone.querySelector('span').innerHTML = clientFormNum + 1
+        clone.innerHTML = clone.innerHTML.replace(formRegex, `client-${clientFormNum}-`)
+        
+        clientSection.appendChild(clone);
+        
+        clientTotalForms.setAttribute('value', `${clientFormNum+1}`)
+
+
+
+    }
+
+    moreClientButton.addEventListener('click', addClient)
+
+
 });

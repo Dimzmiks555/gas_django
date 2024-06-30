@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import CreateView, ListView, DetailView, View, TemplateView
-from .models import Object, Client, Phone, Passport, ObjectDevice, DeviceModel, DeviceType, Contract
-from .forms import LoginUserForm, ObjectCreateForm, PassportCreateForm, ClientCreateForm, PhoneCreateForm, ContractCreateForm, ObjectDeviceFormSet
+from .models import Object, Client, Passport, ObjectDevice, DeviceModel, DeviceType, Contract
+from .forms import LoginUserForm, ObjectCreateForm, PassportCreateForm, ClientFormSet, ContractCreateForm, ObjectDeviceFormSet
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
@@ -25,12 +25,15 @@ def Index(request):
 class ObjectListView(LoginRequiredMixin, ListView):
     template_name = "app/object/list.html"
     model = Object
-    extra_context = {
-        'total': Object.objects.count(),
-    }
 
     def get_queryset(self):
         return Object.objects.filter().order_by('-pk')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['device_formset'] = ObjectDeviceFormSet(queryset=ObjectDevice.objects.none())
+        context['total'] = Object.objects.count()
+        return context
 
 
 class ObjectCreateView(LoginRequiredMixin, TemplateView):
@@ -38,12 +41,13 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
     extra_context = {
         'object_form': ObjectCreateForm,
         'passport_form': PassportCreateForm,
-        'phone_form': PhoneCreateForm,
-        'client_form' : ClientCreateForm,
+        # 'phone_form': PhoneCreateForm,
+        # 'client_form' : ClientCreateForm,
     }
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['device_formset'] = ObjectDeviceFormSet(queryset=ObjectDevice.objects.none())
+        context['client_formset'] = ClientFormSet(queryset=Client.objects.none(), prefix='client')
         return context
 
     def post(self, request):
@@ -66,26 +70,18 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
             comment = data['comment']
         )
 
-        new_client = Client.objects.create(
-            firstname = data['firstname'],
-            lastname = data['lastname'],
-            middlename = data['middlename'],
-            is_main = True if data['is_main'] == 'on' else False,
-            role = data['role'],
-            sex = data['sex'],
-            object = new_object,
-        )
 
-        new_phone = Phone.objects.create(
-            phone_number = data['phone_number'],
-            client = new_client,
-        )
+        # new_phone = Phone.objects.create(
+        #     phone_number = data['phone_number'],
+        #     client = new_client,
+        # )
 
         
         new_passport = Passport.objects.create(
             serial = data['serial'],
             passport_number = data['passport_number'],
             getted_by = data['getted_by'],
+            division = data['division'],
             getted_date = f'{data['getted_date_year']}-{data['getted_date_month']}-{data['getted_date_day']}',
             birthday_date = f'{data['birthday_date_year']}-{data['birthday_date_month']}-{data['birthday_date_day']}',
             birthday_place = data['birthday_place'],
@@ -104,18 +100,42 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
                     devices[key[5]] = {
                         key[7:]: data[key]
                     }
-        print(devices)
         for device in devices:
 
             device_type = DeviceType.objects.filter(pk=devices[device]['type'])[0]
             device_model = DeviceModel.objects.filter(pk=devices[device]['model'])[0]
 
-            new_device = ObjectDevice.objects.create(
+            ObjectDevice.objects.create(
                 type = device_type,
                 model = device_model,
                 object = new_object,
             )
 
+        
+        clients = {}
+
+
+        for key in data.keys():
+            if key.startswith('client') and key[7].isdigit():
+                if key[7] in clients:
+                    clients[key[7]][key[9:]] = data[key]
+                else:
+                    clients[key[7]] = {
+                        key[9:]: data[key]
+                    }
+        for client in clients:
+            Client.objects.create(
+                firstname = clients[client]['firstname'],
+                lastname = clients[client]['lastname'],
+                middlename = clients[client]['middlename'],
+                is_main = True if clients[client]['is_main'] == 'on' else False,
+                role = clients[client]['role'],
+                sex = clients[client]['sex'],
+                phone_number_1 = clients[client]['phone_number_1'],
+                phone_number_2 = clients[client]['phone_number_2'],
+                phone_number_3 = clients[client]['phone_number_3'],
+                object = new_object,
+            )
                 
         pass
         
@@ -141,8 +161,8 @@ class ContractCreateView(LoginRequiredMixin, TemplateView):
 
         current_object = Object.objects.filter(pk=id)
 
-        # client = Client.objects.filter(object=id, role="Собственник")
-        client = Client.objects.filter(object=id)
+        client = Client.objects.filter(object=id, role="Собственник")
+        # client = Client.objects.filter(object=id)
 
 
         contract_data = request.POST.dict()
@@ -170,7 +190,7 @@ class ContractCreateView(LoginRequiredMixin, TemplateView):
             'o': client[0].middlename,
             'full_address': get_full_address(data=current_object[0]),
             'initials': f'{client[0].lastname} {client[0].firstname[:1]}. {client[0].middlename[:1]}.',
-            'phone_number': client[0].phone_set.all()[0].phone_number,
+            'phone_number': client[0].phone_number_1,
             'passport': current_object[0].passport,
             'getted_date': getted_date_str,
             'summ': 3104,

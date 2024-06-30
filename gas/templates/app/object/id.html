@@ -23,10 +23,16 @@
                 <h2 class="title">Контактные лица</h2>
                 {% for client in object.client_set.all %}
                     <p>{{client.role}}</p>
-                    <p class="title is-5 ">{{client.firstname}} {{client.lastname}} {{client.middlename}} <span class="tag is-info ">{{client.sex}}</span></p>
-                    {% for phone in client.phone_set.all %}
-                        <h2 class="subtitle is-3">{{phone.phone_number}}</h2>
-                    {% endfor %}
+                    <p class="title is-5 ">{{client.firstname}} {{client.lastname}} {{client.middlename}} 
+                        {% if client.sex == 'man' %}
+                            <span class="tag is-info ">М</span>
+                        {% else %}
+                            <span class="tag is-danger ">Ж</span>
+                        {% endif %}
+                    </p>
+                    <h2 class="subtitle is-3">{{client.phone_number_1}}</h2>
+                    <h2 class="subtitle is-3">{{client.phone_number_2}}</h2>
+                    <h2 class="subtitle is-3">{{client.phone_number_3}}</h2>
                 {% endfor %}
                 {% comment %} <button class="button">Добавить</button> {% endcomment %}
             </div>
@@ -41,6 +47,8 @@
                 <h2 class="subtitle is-6 is-spaced">{{object.passport.getted_by}}</h2>
                 <p class="title is-5 ">Дата выдачи</p>
                 <h2 class="subtitle is-6 is-spaced">{{object.passport.getted_date}}</h2>
+                <p class="title is-5 ">Код подразделения</p>
+                <h2 class="subtitle is-6 is-spaced">{{object.passport.division}}</h2>
                 <p class="title is-5 ">Место рождения</p>
                 <h2 class="subtitle is-6 is-spaced">{{object.passport.birthday_place}}</h2>
                 <p class="title is-5 ">Дата рождения</p>

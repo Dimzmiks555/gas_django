@@ -26,4 +26,6 @@ urlpatterns = [
     path("objects/<int:id>", ObjectIdView.as_view()),
     path("objects/<int:id>/contract/create", ContractCreateView.as_view()),
     path("objects/create/", ObjectCreateView.as_view()),
+    path('', include('pwa.urls'))
+
 ]

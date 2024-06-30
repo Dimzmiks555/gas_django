@@ -32,11 +32,11 @@
 }
 
 .object_create_form_box {
-    min-width: 50%;
+    min-width: 60%;
 }
 
 .object_create_form_helpers {
-    min-width: 50%;
+    min-width: 40%;
 }
 
 .object_create_form_box > div {
@@ -114,5 +114,32 @@
 
 .device_section {
     column-gap: 80px;
+    flex-wrap: wrap;
+}
+
+.client_add {
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #aaa;
+}
+
+.client_add > div {
+    margin-bottom: 20px;
+    align-items: center;
+    display: flex;
+}
+.client_add input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    min-width: auto !important;
+}
+.client_add > div input {
+    min-width: 200px;
+}
+
+
+.client_section {
+    display: flex;
+    gap: 20px;
     flex-wrap: wrap;
 }

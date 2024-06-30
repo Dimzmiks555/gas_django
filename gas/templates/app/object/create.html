@@ -11,8 +11,17 @@
                 <h3 class="title is-3">Объект</h3>
                 {{object_form}}
                 <h3 class="title is-3">Данные клиента</h3>
-                {{client_form}}
-                {{phone_form}}
+                <div>
+                    <div class="client_section">
+                        {{client_formset.management_form}}
+                        {% for form in client_formset %}
+                            <div class="client_add">
+                                {{form}}
+                            </div>
+                        {% endfor %}
+                    </div>  
+                </div>
+                <button class="button mb-5" id="more_client" type="button">Добавить еще</button><br>
             </div>
             <div class="object_create_form_helpers">
                 <h3 class="title is-3">Автозаполнение</h3>

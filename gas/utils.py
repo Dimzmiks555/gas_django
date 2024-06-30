@@ -31,5 +31,5 @@ def get_full_address(data):
 
     data.type_of_city = data.type_of_city[:1].lower() + data.type_of_city[1:]
 
-    string = f'{data.type_of_city} {data.city}, {data.street_type} {data.street}, д. {data.house} {data.type_of_building} {data.room}' 
+    string = f'{data.region} обл., {data.area} район, {data.type_of_city} {data.city}, {data.street_type} {data.street}, д. {data.house} {data.type_of_building} {data.room}' 
     return string
