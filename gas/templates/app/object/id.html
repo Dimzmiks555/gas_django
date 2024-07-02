@@ -23,7 +23,7 @@
                 <h2 class="title">Контактные лица</h2>
                 {% for client in object.client_set.all %}
                     <p>{{client.role}}</p>
-                    <p class="title is-5 ">{{client.firstname}} {{client.lastname}} {{client.middlename}} 
+                    <p class="title is-5 ">{{client.lastname}} {{client.firstname}} {{client.middlename}} 
                         {% if client.sex == 'man' %}
                             <span class="tag is-info ">М</span>
                         {% else %}

@@ -1,12 +1,12 @@
 from django.shortcuts import render
 from django.views.generic import CreateView, ListView, DetailView, View, TemplateView
-from .models import Object, Client, Passport, ObjectDevice, DeviceModel, DeviceType, Contract
+from .models import Object, Client, Passport, ObjectDevice, DeviceModel, DeviceType, Contract, DeviceKind, DeviceManufacter, DeviceModification
 from .forms import LoginUserForm, ObjectCreateForm, PassportCreateForm, ClientFormSet, ContractCreateForm, ObjectDeviceFormSet
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 import datetime
-from .utils import generate_docx, transform_date_month, get_full_address
+from .utils import generate_docx, get_pricelist_array, transform_date_month, get_full_address
 from django.utils.translation import get_language, activate
 from num2words import num2words
 
@@ -102,12 +102,18 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
                     }
         for device in devices:
 
-            device_type = DeviceType.objects.filter(pk=devices[device]['type'])[0]
-            device_model = DeviceModel.objects.filter(pk=devices[device]['model'])[0]
+            device_type = DeviceType.objects.filter(pk=int(devices[device]['type']))[0]
+            device_model = DeviceModel.objects.filter(pk=int(devices[device]['model']))[0] if devices[device]['model'] else  None
+            device_kind = DeviceKind.objects.filter(pk=int(devices[device]['kind']))[0] if devices[device]['kind'] else  None
+            device_manufacter = DeviceManufacter.objects.filter(pk=int(devices[device]['manufacter']))[0] if devices[device]['manufacter'] else  None
+            device_modification = DeviceModification.objects.filter(pk=int(devices[device]['modification']))[0] if devices[device]['modification'] else  None
 
             ObjectDevice.objects.create(
                 type = device_type,
                 model = device_model,
+                modification = device_modification,
+                kind = device_kind,
+                manufacter = device_manufacter,
                 object = new_object,
             )
 
@@ -178,7 +184,15 @@ class ContractCreateView(LoginRequiredMixin, TemplateView):
             
         getted_date_str = '%02d.%02d.%d' % (int(current_object[0].passport.getted_date.day), int(current_object[0].passport.getted_date.month), int(current_object[0].passport.getted_date.year))
 
-        summ_words = num2words(3104, lang='ru')
+
+        prices = get_pricelist_array(current_object[0])
+
+        total_summ = 0
+
+        for p in prices:
+            total_summ += prices[p]['total']
+
+        summ_words = num2words(int(total_summ), lang='ru')
 
         data = {
             **contract_data,
@@ -193,16 +207,18 @@ class ContractCreateView(LoginRequiredMixin, TemplateView):
             'phone_number': client[0].phone_number_1,
             'passport': current_object[0].passport,
             'getted_date': getted_date_str,
-            'summ': 3104,
-            'summ_words': summ_words
+            'summ': total_summ,
+            'summ_words': summ_words,
+            'devices': current_object[0].objectdevice_set.all(),
+            'prices': prices
 
         }
 
         print(data)
+        new_contract = Contract.objects.create(contract_number=data['contract_number'], date_of_contract=contract_full_date_str_for_db, summ=0.00, object=current_object[0], status="active")
 
-        generate_docx(data)
+        generate_docx(data, new_contract.uuid_number)
 
-        Contract.objects.create(contract_number=data['contract_number'], date=contract_full_date_str_for_db, summ=0.00, object=current_object[0], status="active")
-
+        
 
         # return redirect(f'/objects/{id}')

@@ -1,5 +1,6 @@
 from django.db import models
 import datetime
+import uuid
 
 # Create your models here.
 
@@ -20,17 +21,17 @@ class Object(models.Model):
     area = models.CharField(max_length=255, verbose_name="Район")
     type_of_city = models.CharField(max_length=255, verbose_name="Тип населенного пункта")
     city = models.CharField(max_length=255, verbose_name="Город")
-    street_type = models.CharField(max_length=255, verbose_name="Тип улицы")
+    street_type = models.CharField(max_length=255, verbose_name="Тип улицы", blank=True, null=True) 
     street = models.CharField(max_length=255, verbose_name="Улица")
     house = models.CharField(max_length=255, verbose_name="Дом")
     room = models.CharField(max_length=255, verbose_name="Квартира", blank=True)
     postcode = models.CharField(max_length=50, verbose_name="Индекс", blank=True)
     show_part = models.BooleanField(verbose_name="Отображать часть дома/квартиру в документах", blank=True, null=True)
     gas_date = models.DateField(verbose_name="Дата пуска газа", blank=True, null=True)
-    comment = models.TextField(verbose_name="Примечание", blank=True)
+    comment = models.TextField(verbose_name="Примечание", blank=True, null=True)
 
     def get_full_address(self):
-        address = f'{self.type_of_city} {self.city}, {self.street_type} {self.street}, д. {self.house} {self.room}'
+        address = f'{self.type_of_city} {self.city}, {self.street_type} {self.street}, д. {self.house}, кв. {self.room}'
         return address
     
     class Meta:
@@ -64,9 +65,9 @@ class Passport(models.Model):
     serial = models.CharField(max_length=12, verbose_name="Серия")
     passport_number = models.CharField(max_length=12, verbose_name="Номер")
     getted_by = models.CharField(max_length=255, verbose_name="Выдан")
-    getted_date = models.DateField(verbose_name="Дата выдачи")
-    division = models.CharField(max_length=255, verbose_name="Код подразделения")
-    birthday_date = models.DateField(verbose_name="День рождения")
+    getted_date = models.DateField(verbose_name="Дата выдачи", blank=True, null=True)
+    division = models.CharField(max_length=255, verbose_name="Код подразделения", blank=True, null=True)
+    birthday_date = models.DateField(verbose_name="День рождения", blank=True, null=True)
     birthday_place = models.CharField(max_length=255, verbose_name="Место рождения")
     registration_adress = models.CharField(max_length=255, verbose_name="Адрес регистрации")
     object = models.OneToOneField(to=Object, verbose_name='Объект', on_delete=models.PROTECT)
@@ -87,8 +88,9 @@ class Master(models.Model):
 
 class Contract(models.Model):
     object = models.ForeignKey(Object, on_delete = models.PROTECT, blank=True, null=True)
-    contract_number = models.IntegerField(verbose_name="Номер", unique=True)
+    contract_number = models.IntegerField(verbose_name="Номер")
     status = models.CharField(max_length=50, verbose_name="Статус")
+    uuid_number = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     date_of_contract = models.DateField(verbose_name="Дата", default=datetime.datetime.now())
     summ = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма")
     
@@ -150,13 +152,13 @@ class DeviceModification(models.Model):
 class ObjectDevice(models.Model):
     object = models.ForeignKey(Object, on_delete = models.PROTECT, blank=True, null=True)
     type = models.ForeignKey(DeviceType, on_delete=models.PROTECT, verbose_name='Категория оборудования')
-    kind = models.ForeignKey(DeviceKind, on_delete=models.PROTECT, verbose_name='Тип')
-    modification = models.ForeignKey(DeviceModification, on_delete=models.PROTECT, verbose_name='Модификация')
-    manufacter = models.ForeignKey(DeviceManufacter, on_delete=models.PROTECT, verbose_name='Производитель')
-    model = models.ForeignKey(DeviceModel, on_delete=models.PROTECT, verbose_name='Модель')
-    sn = models.CharField(max_length=256, verbose_name="Серийный номер")
-    date_of_manufacture = models.DateField(verbose_name="Дата изготовления",default=datetime.datetime.now())
-    date_of_commissioning = models.DateField(verbose_name="Дата ввода в эксплуатацию", default=datetime.datetime.now())
+    kind = models.ForeignKey(DeviceKind, on_delete=models.PROTECT, verbose_name='Тип', blank=True, null=True)
+    modification = models.ForeignKey(DeviceModification, on_delete=models.PROTECT, verbose_name='Модификация', blank=True, null=True)
+    manufacter = models.ForeignKey(DeviceManufacter, on_delete=models.PROTECT, verbose_name='Производитель', blank=True, null=True)
+    model = models.ForeignKey(DeviceModel, on_delete=models.PROTECT, verbose_name='Модель', blank=True, null=True)
+    sn = models.CharField(max_length=256, verbose_name="Серийный номер", blank=True, null=True)
+    date_of_manufacture = models.DateField(verbose_name="Дата изготовления",default=datetime.datetime.now(), blank=True, null=True)
+    date_of_commissioning = models.DateField(verbose_name="Дата ввода в эксплуатацию", default=datetime.datetime.now(), blank=True, null=True)
 
     class Meta:
         verbose_name = 'Оборудование'
@@ -164,10 +166,13 @@ class ObjectDevice(models.Model):
 
 
 class Price(models.Model):
-    type = models.ForeignKey(DeviceType, on_delete=models.PROTECT, verbose_name='Тип оборудования')
+    type = models.ForeignKey(DeviceType, on_delete=models.PROTECT, verbose_name='Тип оборудования', blank=True, null=True)
     name = models.CharField(max_length=256, verbose_name="Название")
     price = models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Цена")
     
     class Meta:
         verbose_name = 'Цена'
         verbose_name_plural = 'Цены'
+    
+    def __str__(self): # new
+        return f'{self.name} ({self.type}). Цена {self.price}'

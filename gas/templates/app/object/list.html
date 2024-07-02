@@ -57,13 +57,6 @@
               <input class="input" type="text" placeholder="Телефон" />
             </p>
         </div>
-        <div class="select is-fullwidth mb-4">
-            <select>
-              <option>Тип н/п</option>
-              <option>город</option>
-              <option>поселок</option>
-            </select>
-          </div>
         <button class="button is-primary is-fullwidth">Найти</button>
       </aside>
       <div class="objects__list">
@@ -109,9 +102,7 @@
                   <td></td>
                   <td>
                     {% for client in object.client_set.all %}
-                      {% for phone in client.phone_set.all %}
-                        {{phone.phone_number}}<br>
-                      {% endfor %} 
+                    {{client.phone_number_1}} {{client.phone_number_2}} {{client.phone_number_3}}
                     {% endfor %} 
                   </td>
                   <td>
