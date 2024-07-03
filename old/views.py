@@ -5,7 +5,7 @@ from .models import Objects, People, ObjectDevices
 from gas.models import Object, Passport, Client, ObjectDevice, DeviceKind, DeviceManufacter, DeviceModel, DeviceModification, DeviceType
 
 def imp(request):
-    old_objs = Objects.objects.using('import').all()[:10]
+    old_objs = Objects.objects.using('import').all()
 
     for obj in old_objs:
         print(obj)

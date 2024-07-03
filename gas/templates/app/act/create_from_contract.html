@@ -1,0 +1,32 @@
+{% extends 'components/layout.html' %}
+
+{% block main %}
+<a href="/objects" class="button mb-4">Назад</a>
+    
+<form class="object_create_form" action="/objects/{{id}}/act/create_from_contract" method="post">
+    {% csrf_token %}
+    <div class="object_create_form_section">
+        <div class="object_create_form_box">
+            <h3 class="title is-3">Новый акт на основе договора для объекта № {{id}}</h3>
+            {{act_form}}
+            <table border="1">
+                <tr><th>Наименование</th><th>Количество</th><th>Цена</th><th>Сумма</th></tr>
+                {% for p in positions %}
+                <tr><td>{{ p.name }}</td><td>{{ p.amount }}</td><td>{{ p.price }}</td><td>{{ p.total }}</td></tr>
+                {% endfor %}
+                <tr><th colspan="3">Итого</th><th>{{ total_summ }}</th>
+            </table>
+            <div class="actposition_section">
+                <!-- {{position_formset.management_form}}
+                {% for form in position_formset %}
+                    <div class="actposition_add">
+                        {{form}}
+                    </div>
+                {% endfor %} -->
+                
+            </div>  
+            <button class="button" type="submit">Создать</button>
+        </div>
+    </div>
+</form>
+{% endblock main %}

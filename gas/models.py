@@ -78,13 +78,16 @@ class Passport(models.Model):
 
 
 class Master(models.Model):
-    firstname = models.CharField(max_length=256, verbose_name="Имя")
     lastname = models.CharField(max_length=256, verbose_name="Фамилия")
+    firstname = models.CharField(max_length=256, verbose_name="Имя")
     middlename = models.CharField(max_length=256, verbose_name="Отчество")
    
     class Meta:
         verbose_name = 'Мастер'
         verbose_name_plural = 'Мастера'
+    
+    def __str__(self): # new
+        return f'{self.lastname} {self.firstname} {self.middlename}'
 
 class Contract(models.Model):
     object = models.ForeignKey(Object, on_delete = models.PROTECT, blank=True, null=True)
@@ -100,7 +103,36 @@ class Contract(models.Model):
         verbose_name = 'Договор'
         verbose_name_plural = 'Договора'
 
+ 
+
+class Act(models.Model):
+    object = models.ForeignKey(Object, on_delete = models.PROTECT, blank=True, null=True)
+    master = models.ForeignKey(Master, on_delete=models.PROTECT, verbose_name="Мастер")
+    act_number = models.CharField(max_length=256, verbose_name="Номер")
+    uuid_number = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
+    date_of_act = models.DateField(verbose_name="Дата", default=datetime.datetime.now())
+    total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма акта")
     
+    # positions = models.CharField(max_length=255, verbose_name="Выдан")
+    
+    class Meta:
+        verbose_name = 'Акт'
+        verbose_name_plural = 'Акты'
+    
+
+class ActPosition(models.Model):
+    act = models.ForeignKey(Act, on_delete = models.PROTECT, blank=True, null=True)
+    name = models.CharField(max_length=256, verbose_name="Название")
+    amount = models.IntegerField(verbose_name="Количество")
+    price = models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Цена")
+    summ = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма")
+    
+    # positions = models.CharField(max_length=255, verbose_name="Выдан")
+    
+    class Meta:
+        verbose_name = 'Договор'
+        verbose_name_plural = 'Договора'
+
 class DeviceType(models.Model):
     name = models.CharField(max_length=256, verbose_name="Название")
     def __str__(self): # new
@@ -157,8 +189,8 @@ class ObjectDevice(models.Model):
     manufacter = models.ForeignKey(DeviceManufacter, on_delete=models.PROTECT, verbose_name='Производитель', blank=True, null=True)
     model = models.ForeignKey(DeviceModel, on_delete=models.PROTECT, verbose_name='Модель', blank=True, null=True)
     sn = models.CharField(max_length=256, verbose_name="Серийный номер", blank=True, null=True)
-    date_of_manufacture = models.DateField(verbose_name="Дата изготовления",default=datetime.datetime.now(), blank=True, null=True)
-    date_of_commissioning = models.DateField(verbose_name="Дата ввода в эксплуатацию", default=datetime.datetime.now(), blank=True, null=True)
+    date_of_manufacture = models.DateField(verbose_name="Дата изготовления", blank=True, null=True)
+    date_of_commissioning = models.DateField(verbose_name="Дата ввода в эксплуатацию", blank=True, null=True)
 
     class Meta:
         verbose_name = 'Оборудование'

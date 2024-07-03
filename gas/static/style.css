@@ -35,6 +35,13 @@
     min-width: 60%;
 }
 
+.object_create_form_box table td {
+    padding: 10px;
+}
+.object_create_form_box table th {
+    padding: 10px;
+}
+
 .object_create_form_helpers {
     min-width: 40%;
 }
@@ -142,4 +149,15 @@
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
+}
+
+
+.object_devices__list {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.object_devices__item {
+
 }

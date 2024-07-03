@@ -1,13 +1,12 @@
 from django.shortcuts import render
 from django.views.generic import CreateView, ListView, DetailView, View, TemplateView
-from .models import Object, Client, Passport, ObjectDevice, DeviceModel, DeviceType, Contract, DeviceKind, DeviceManufacter, DeviceModification
-from .forms import LoginUserForm, ObjectCreateForm, PassportCreateForm, ClientFormSet, ContractCreateForm, ObjectDeviceFormSet
+from .models import Object, Client, Passport, ObjectDevice, DeviceModel, DeviceType, Contract, DeviceKind, DeviceManufacter, DeviceModification, ActPosition, Act, Master
+from .forms import LoginUserForm, ObjectCreateForm, PassportCreateForm, ClientFormSet, ContractCreateForm, ObjectDeviceFormSet, ActCreateForm, PositionFormSet
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 import datetime
-from .utils import generate_docx, get_pricelist_array, transform_date_month, get_full_address
-from django.utils.translation import get_language, activate
+from .utils import generate_docx, get_pricelist_array, transform_date_month, get_full_address, generate_act
 from num2words import num2words
 
 
@@ -152,6 +151,111 @@ class ObjectIdView(LoginRequiredMixin, DetailView):
     pk_url_kwarg = 'id'
     template_name = "app/object/id.html"
 
+
+    
+
+
+class ActCreateFromContractView(LoginRequiredMixin, TemplateView):
+    @property
+    def id(self):
+       return self.kwargs['id']
+    
+    template_name = "app/act/create_from_contract.html"
+    extra_context = {
+        'act_form': ActCreateForm,
+    }
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['position_formset'] = PositionFormSet()
+
+        current_object = Object.objects.filter(pk=self.kwargs['id'])[0]
+        
+        prices = get_pricelist_array(current_object)
+
+        total_summ = 0
+        for p in prices:
+            total_summ += prices[p]['total']
+
+        positions = []
+        for p in prices:
+            if prices[p]['amount'] > 0:
+                positions.append(prices[p])
+
+        
+        # actual_contract = Contract.objects.filter(object=current_object, status="active")[0]
+        
+        # context['actual_contract'] = actual_contract
+        context['total_summ'] = total_summ
+        context['positions'] = positions
+
+        return context
+    
+    def post(self, request, id):
+
+        current_object = Object.objects.filter(pk=id)
+        client = Client.objects.filter(object=id, role="Собственник")
+        actual_contract = Contract.objects.filter(object=current_object[0], status="active")[0]
+
+        act_data = request.POST.dict()
+
+        contract_full_date_month = transform_date_month(actual_contract.date_of_contract.strftime('%Y-%m-%d'), '-')
+        act_full_date_str = '%02d.%02d.%d' % (int(act_data['date_day']), int(act_data['date_month']), int(act_data['date_year']))
+        act_full_date_str_for_db = '%02d-%02d-%d' % (int(act_data['date_year']), int(act_data['date_month']), int(act_data['date_day']))
+        act_full_date_month = transform_date_month(act_full_date_str, '.')
+
+
+        number_month = str(actual_contract.date_of_contract.month)
+        if (len(number_month) < 2):
+            number_month = '0' + number_month
+
+            
+        getted_date_str = '%02d.%02d.%d' % (int(current_object[0].passport.getted_date.day), int(current_object[0].passport.getted_date.month), int(current_object[0].passport.getted_date.year))
+
+        prices = get_pricelist_array(current_object[0])
+
+        total_summ = 0
+
+        for p in prices:
+            total_summ += prices[p]['total']
+
+        master = Master.objects.filter(pk=act_data['master'])[0]
+
+        data = {
+            **act_data,
+            'contract_number': actual_contract.contract_number,
+            'contract_day': str(actual_contract.date_of_contract.day),
+            'contract_full_month': contract_full_date_month,
+            'full_month': act_full_date_month,
+            'contract_year': str(actual_contract.date_of_contract.year),
+            'number_month': number_month,
+            'object_id': id,
+            'f': client[0].lastname,
+            'i': client[0].firstname,
+            'o': client[0].middlename,
+            'full_address': get_full_address(data=current_object[0]),
+            'initials': f'{client[0].lastname} {client[0].firstname[:1]}. {client[0].middlename[:1]}.',
+            'master_initials': f'{master.lastname} {master.firstname[:1]}. {master.middlename[:1]}.',
+            'phone_number': client[0].phone_number_1,
+            'passport': current_object[0].passport,
+            'getted_date': getted_date_str,
+            'summ': total_summ,
+            'devices': current_object[0].objectdevice_set.all(),
+            'prices': prices
+
+        }
+
+        print(act_data['master'])
+
+        new_act = Act.objects.create(act_number=data['act_number'], date_of_act=act_full_date_str_for_db, total=total_summ, object=current_object[0], master = master)
+
+        generate_act(data, new_act.uuid_number)
+
+        
+
+        return redirect(f'/objects/{id}')
+
+
 class ContractCreateView(LoginRequiredMixin, TemplateView):
 
     @property
@@ -162,6 +266,7 @@ class ContractCreateView(LoginRequiredMixin, TemplateView):
     extra_context = {
         'contract_form': ContractCreateForm,
     }
+
 
     def post(self, request, id):
 
@@ -175,7 +280,7 @@ class ContractCreateView(LoginRequiredMixin, TemplateView):
 
         contract_full_date_str = '%02d.%02d.%d' % (int(contract_data['date_day']), int(contract_data['date_month']), int(contract_data['date_year']))
         contract_full_date_str_for_db = '%02d-%02d-%d' % (int(contract_data['date_year']), int(contract_data['date_month']), int(contract_data['date_day']))
-        contract_full_date_month = transform_date_month(contract_full_date_str)
+        contract_full_date_month = transform_date_month(contract_full_date_str, '.')
 
         number_month = contract_data['date_month']
         if (len(number_month) < 2):
@@ -215,10 +320,10 @@ class ContractCreateView(LoginRequiredMixin, TemplateView):
         }
 
         print(data)
-        new_contract = Contract.objects.create(contract_number=data['contract_number'], date_of_contract=contract_full_date_str_for_db, summ=0.00, object=current_object[0], status="active")
+        new_contract = Contract.objects.create(contract_number=data['contract_number'], date_of_contract=contract_full_date_str_for_db, summ=total_summ, object=current_object[0], status="active")
 
         generate_docx(data, new_contract.uuid_number)
 
         
 
-        # return redirect(f'/objects/{id}')
+        return redirect(f'/objects/{id}')

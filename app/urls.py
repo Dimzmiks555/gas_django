@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include  
-from gas.views import Index, ObjectCreateView, ObjectIdView, ObjectListView, ContractCreateView
+from gas.views import Index, ObjectCreateView, ObjectIdView, ObjectListView, ContractCreateView, ActCreateFromContractView
 from old.views import imp
 
 urlpatterns = [
@@ -27,6 +27,7 @@ urlpatterns = [
     path("objects/", ObjectListView.as_view()),
     path("objects/<int:id>", ObjectIdView.as_view()),
     path("objects/<int:id>/contract/create", ContractCreateView.as_view()),
+    path("objects/<int:id>/act/create_from_contract", ActCreateFromContractView.as_view()),
     path("objects/create/", ObjectCreateView.as_view()),
     path('', include('pwa.urls'))
 

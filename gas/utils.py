@@ -26,10 +26,19 @@ def generate_docx(data, uuid):
     two.render(data)
     two.save(BASE_DIR / f"generated_docs/Приложение № 2 к договору № {data['contract_number']}-OBJ{data['object_id']}-{data['date_day']}.{data['date_month']}.{data['date_year']}-{uuid_number}.docx")
     
-def transform_date_month(date):
+def generate_act(data, uuid):
+
+    uuid_number = uuid
+
+    act = DocxTemplate(BASE_DIR / "docx/act.docx")
+    act.render(data)
+    act.save(BASE_DIR / f"generated_docs/Акт № {data['act_number']}-OBJ{data['object_id']}-{data['date_day']}.{data['date_month']}.{data['date_year']}-{uuid_number}.docx")
+   
+
+def transform_date_month(date, separator):
     months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
            'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря']
-    day,month,year = date.split('.')
+    day,month,year = date.split(separator)
     return f'{months[int(month) - 1]}'
 
 def get_full_address(data):

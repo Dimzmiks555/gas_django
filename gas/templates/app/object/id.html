@@ -63,9 +63,8 @@
                 
                 {% if object.contract_set.count > 0 %}
                     {% for contract in object.contract_set.all %}
-                        <p class="title is-5 ">Договор № {{contract.contract_number}}</p>
-                        <h2 class="subtitle is-5 is-spaced">{{contract.date}}</h2>
-                        <p class="subtitle is-5">Сумма {{contract.summ}}</p>
+                        <p class="title is-5 ">Договор № {{contract.contract_number}} от {{contract.date_of_contract}}</p>
+                        <p class="subtitle is-5 mb-2">Сумма {{contract.summ}}</p>
                         <!-- {% if contract.status != 'active' %}
                             <a href="/objects/{{object.id}}/contract/create" class="button mt-2">Добавить</a>
                         {% endif %} -->
@@ -79,8 +78,19 @@
             </div>
             <div class="box">
                 <h2 class="title">Акты выполненных работ</h2>
+                {% if object.act_set.count > 0 %}
+                    {% for act in object.act_set.all %}
+                        <p class="title is-5 ">Акт № {{act.act_number}} от {{act.date_of_act}}</p>
+                        <p class="subtitle is-5 mb-2">Сумма {{act.total}}</p>
+                        <!-- {% if contract.status != 'active' %}
+                            <a href="/objects/{{object.id}}/contract/create" class="button mt-2">Добавить</a>
+                        {% endif %} -->
+
+                    {% endfor %}
+                {% else %}
                 <p>Отсутствует</p>
-                <button class="button mt-4" disabled>Добавить</button>
+                {% endif %}
+                <a href="/objects/{{object.id}}/act/create_from_contract" class="button mt-4">Добавить</a>
             </div>
             {% comment %} <div class="box">
                 <h2 class="title">Заявки</h2>
@@ -93,13 +103,21 @@
         <div class="column">
             <div class="box">
                 <h2 class="title">Оборудование</h2>
-                {% for device in object.objectdevice_set.all %}
-                    <p class="title is-5 ">{{device.type}}</p>
-                    <h2 class="subtitle is-6 is-spaced">{{device.model}}</h2>
-                {% endfor %}
+                <div class="object_devices__list">
+                    {% for device in object.objectdevice_set.all %}
+                    <div class="object_devices__item">
+                        <p class="title is-5 is-spaced">{{device.type}}</p>
+                        <h2 class="subtitle is-6">{{ device.kind }}</h2>
+                        <h2 class="subtitle is-6">{{ device.manufacter }}</h2>
+                        <h2 class="subtitle is-6">{{ device.model }}</h2>
+                        <h2 class="subtitle is-6">{{ device.modification }}</h2>
+                        <h2 class="subtitle is-6">S/N {{ device.sn }}</h2>
+                        <h2 class="subtitle is-6">Дата производства {{ device.date_of_manufacture }}</h2>
+                        <h2 class="subtitle is-6">Дата поверки {{ device.date_of_commissioning }}</h2>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-        <div class="column">
         </div>
     </div>
 {% endblock main %}

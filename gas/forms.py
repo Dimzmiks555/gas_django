@@ -2,7 +2,7 @@
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django import forms
-from .models import Object, Passport, Client, Contract, ObjectDevice
+from .models import Object, Passport, Client, Contract, ObjectDevice, Act, ActPosition, Price
 import datetime
 
 
@@ -39,6 +39,15 @@ class ContractCreateForm(forms.ModelForm):
         fields = ['contract_number', 'date']
 
 
+class ActCreateForm(forms.ModelForm):
+    date = forms.DateField(label='Дата',widget=forms.SelectDateWidget(years=range(2024, 2050)))
+    class Meta:
+        model = Act
+        fields = ['act_number', 'date', 'master']
+
+
+
+
 ObjectDeviceFormSet = forms.modelformset_factory(
     ObjectDevice, 
     fields=(
@@ -57,4 +66,15 @@ ObjectDeviceFormSet = forms.modelformset_factory(
 ClientFormSet = forms.modelformset_factory(
     Client, fields=('lastname', 'firstname','middlename','is_main','role','sex','phone_number_1','phone_number_2','phone_number_3'), extra=1
 )
+
+
+
+class ActPositionForm(forms.Form):
+    price_position = forms.ModelChoiceField(queryset=Price.objects.all(), empty_label=None, label="Услуга")
+    amount = forms.IntegerField(label="Количество")
+    class Meta:
+        model = ActPosition
  
+PositionFormSet = forms.formset_factory(
+    ActPositionForm, extra=1
+)
