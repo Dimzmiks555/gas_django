@@ -133,7 +133,8 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
                 firstname = clients[client]['firstname'],
                 lastname = clients[client]['lastname'],
                 middlename = clients[client]['middlename'],
-                is_main = True if clients[client]['is_main'] == 'on' else False,
+                is_main = True,
+                #  if clients[client]['is_main'] == 'on' else False
                 role = clients[client]['role'],
                 sex = clients[client]['sex'],
                 phone_number_1 = clients[client]['phone_number_1'],
