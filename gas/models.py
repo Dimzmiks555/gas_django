@@ -196,6 +196,21 @@ class ObjectDevice(models.Model):
         verbose_name = 'Оборудование'
         verbose_name_plural = 'Оборудования'
 
+    def __str__(self): # new
+
+        full_name = f'Объект № {self.object.pk}, {self.type.name}'
+
+        if self.kind:
+            full_name += f' {self.kind.name}'
+        if self.modification:
+            full_name += f' {self.modification.name}'
+        if self.manufacter:
+            full_name += f' {self.manufacter.name}'
+        if self.model:
+            full_name += f' {self.model.name}'
+
+        return full_name
+
 
 class Price(models.Model):
     type = models.ForeignKey(DeviceType, on_delete=models.PROTECT, verbose_name='Тип оборудования', blank=True, null=True)

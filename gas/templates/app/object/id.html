@@ -63,7 +63,7 @@
                 
                 {% if object.contract_set.count > 0 %}
                     {% for contract in object.contract_set.all %}
-                        <p class="title is-5 ">Договор № {{contract.contract_number}} от {{contract.date_of_contract}}</p>
+                        <p class="title is-5 ">Договор № {{contract.contract_number}} от {{contract.date_of_contract}} {% if contract.status == 'active' %}✅{% else %}❌{% endif %}</p>
                         <p class="subtitle is-5 mb-2">Сумма {{contract.summ}}</p>
                         <!-- {% if contract.status != 'active' %}
                             <a href="/objects/{{object.id}}/contract/create" class="button mt-2">Добавить</a>

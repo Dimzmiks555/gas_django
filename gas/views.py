@@ -8,6 +8,8 @@ from django.shortcuts import redirect
 import datetime
 from .utils import generate_docx, get_pricelist_array, transform_date_month, get_full_address, generate_act
 from num2words import num2words
+from django.db.models import Q
+
 
 
 
@@ -26,12 +28,68 @@ class ObjectListView(LoginRequiredMixin, ListView):
     model = Object
 
     def get_queryset(self):
-        return Object.objects.filter().order_by('-pk')
+        last_name = self.request.GET.get('last_name')
+        first_name = self.request.GET.get('first_name')
+        middle_name = self.request.GET.get('middle_name')
+        phone_number = self.request.GET.get('phone_number')
+
+        region = self.request.GET.get('region')
+        city = self.request.GET.get('city')
+        area = self.request.GET.get('area')
+        street = self.request.GET.get('street')
+        house = self.request.GET.get('house')
+        room = self.request.GET.get('room')
+
+        clients_filter = {}
+
+        if last_name:
+            clients_filter["lastname__contains"] = last_name
+        if first_name:
+            clients_filter["firstname__contains"] = first_name
+        if middle_name:
+            clients_filter["middlename__contains"] = middle_name
+
+        clients_query = Q(**clients_filter)
+        
+        if phone_number:
+            local_query = Q(phone_number_1__contains=phone_number)
+            local_query.add(Q(phone_number_2__contains=phone_number), Q.OR)
+            local_query.add(Q(phone_number_3__contains=phone_number), Q.OR)
+            clients_query.add(local_query, Q.AND)
+
+
+        clients = Client.objects.filter(clients_query)
+
+        filter_object = {
+            "client__in": clients
+        }
+
+
+        if region:
+            filter_object["region__contains"] = region
+        if area:
+            filter_object["area__contains"] = area
+        if city:
+            filter_object["city__contains"] = city
+        if street:
+            filter_object["street__contains"] = street
+        if house:
+            filter_object["house__contains"] = house
+        if room:
+            filter_object["room__contains"] = room
+
+
+        # print(last_name)
+
+        return Object.objects.filter(Q(**filter_object)).order_by('-pk')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['device_formset'] = ObjectDeviceFormSet(queryset=ObjectDevice.objects.none())
-        context['total'] = Object.objects.count()
+        if self.queryset:
+            context['total'] = self.queryset.count()
+        else:
+            context['total'] = 0
         return context
 
 
@@ -129,12 +187,13 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
                         key[9:]: data[key]
                     }
         for client in clients:
+            print(clients[client])
             Client.objects.create(
                 firstname = clients[client]['firstname'],
                 lastname = clients[client]['lastname'],
                 middlename = clients[client]['middlename'],
-                is_main = True,
-                #  if clients[client]['is_main'] == 'on' else False
+                # is_main = True,
+                is_main = True if clients[client]['is_main'] == 'on' else False,
                 role = clients[client]['role'],
                 sex = clients[client]['sex'],
                 phone_number_1 = clients[client]['phone_number_1'],
@@ -321,9 +380,20 @@ class ContractCreateView(LoginRequiredMixin, TemplateView):
         }
 
         print(data)
+
+        actual_contract = Contract.objects.filter(status="active", object=id)
+
+        if actual_contract.count() > 0:
+            # actual_contract[0].status = 'idle'
+            actual_contract.update(status="idle")
+
+        # print(actual_contract[0].status)
+
         new_contract = Contract.objects.create(contract_number=data['contract_number'], date_of_contract=contract_full_date_str_for_db, summ=total_summ, object=current_object[0], status="active")
 
         generate_docx(data, new_contract.uuid_number)
+
+
 
         
 

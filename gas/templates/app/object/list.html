@@ -3,61 +3,64 @@
 {% block main %}
 <div class="objects_page">
     <aside class="menu objects__filters">
-        <h3 class="title is-5">Фильтры</h3>
-        <p class="menu-label">Ключевое лицо</p>
-        <div class="field">
-            <p class="control">
-              <input class="input" type="text" placeholder="Фамилия" />
-            </p>
-        </div>
-        <div class="field">
-            <p class="control">
-              <input class="input" type="text" placeholder="Имя" />
-            </p>
-        </div>
-        <div class="field">
-            <p class="control">
-              <input class="input" type="text" placeholder="Отчество" />
-            </p>
-        </div>
-        <p class="menu-label">Адрес</p>
-        <div class="field">
-            <p class="control">
-              <input class="input" type="text" placeholder="Область" />
-            </p>
-        </div>
-        <div class="field">
-            <p class="control">
-              <input class="input" type="text" placeholder="Город" />
-            </p>
-        </div>
-        <div class="field">
-            <p class="control">
-              <input class="input" type="text" placeholder="Район" />
-            </p>
-        </div>
-        <div class="field">
-            <p class="control">
-              <input class="input" type="text" placeholder="Улица" />
-            </p>
-        </div>
-        <div class="field">
-            <p class="control">
-              <input class="input" type="text" placeholder="Дом" />
-            </p>
-        </div>
-        <div class="field">
-            <p class="control">
-              <input class="input" type="text" placeholder="Квартира" />
-            </p>
-        </div>
-        <p class="menu-label">Прочее</p>
-        <div class="field">
-            <p class="control">
-              <input class="input" type="text" placeholder="Телефон" />
-            </p>
-        </div>
-        <button class="button is-primary is-fullwidth">Найти</button>
+        <form>
+          <h3 class="title is-5">Фильтры</h3>
+          <p class="menu-label">Ключевое лицо</p>
+          <div class="field">
+              <p class="control">
+                <input value="{{request.GET.last_name}}" name="last_name" class="input" type="text" placeholder="Фамилия" />
+              </p>
+          </div>
+          <div class="field">
+              <p class="control">
+                <input value="{{request.GET.first_name}}" name="first_name" class="input" type="text" placeholder="Имя" />
+              </p>
+          </div>
+          <div class="field">
+              <p class="control">
+                <input value="{{request.GET.middle_name}}" name="middle_name" class="input" type="text" placeholder="Отчество" />
+              </p>
+          </div>
+          <p class="menu-label">Адрес</p>
+          <div class="field">
+              <p class="control">
+                <input value="{{request.GET.region}}" name="region" class="input" type="text" placeholder="Область" />
+              </p>
+          </div>
+          <div class="field">
+              <p class="control">
+                <input value="{{request.GET.city}}" name="city" class="input" type="text" placeholder="Город" />
+              </p>
+          </div>
+          <div class="field">
+              <p class="control">
+                <input value="{{request.GET.area}}" name="area" class="input" type="text" placeholder="Район" />
+              </p>
+          </div>
+          <div class="field">
+              <p class="control">
+                <input value="{{request.GET.street}}" name="street" class="input" type="text" placeholder="Улица" />
+              </p>
+          </div>
+          <div class="field">
+              <p class="control">
+                <input value="{{request.GET.house}}" name="house" class="input" type="text" placeholder="Дом" />
+              </p>
+          </div>
+          <div class="field">
+              <p class="control">
+                <input value="{{request.GET.room}}" name="room" class="input" type="text" placeholder="Квартира" />
+              </p>
+          </div>
+          <p class="menu-label">Прочее</p>
+          <div class="field">
+              <p class="control">
+                <input value="{{request.GET.phone_number}}" name="phone_number" class="input" type="text" placeholder="Телефон" />
+              </p>
+          </div>
+          <button class="button is-primary is-fullwidth" type="submit">Найти</button>
+          <a class="button is-fullwidth mt-2" href="/objects/">Сбросить</a>
+        </form>
       </aside>
       <div class="objects__list">
         <nav class="level">
@@ -76,45 +79,51 @@
               <p class="level-item"><a href="/objects/create" class="button is-primary">Добавить</a></p>
             </div>
           </nav>
-          <table class="table is-bordered is-striped is-fullwidth is-hoverable">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Адрес объекта</th>
-                <th>Ключевое лицо</th>
-                <th>Дата договора</th>
-                <th>Номер телефона</th>
-                <th>Тип оборудования</th>   
-              </tr>
-            </thead>
-            <tbody>
-              {% for object in object_list %}
-                <tr>
-                  <th>{{object.id}}</th>
-                  <td>
-                    <a href="/objects/{{object.id}}">{{object.get_full_address}}</a>
-                  </td>
-                  <td>
-                    {% for client in object.client_set.all %}
-                      {{client.firstname}} {{client.lastname}} {{client.middlename}}
-                    {% endfor %} 
-                  </td>
-                  <td></td>
-                  <td>
-                    {% for client in object.client_set.all %}
-                    {{client.phone_number_1}} {{client.phone_number_2}} {{client.phone_number_3}}
-                    {% endfor %} 
-                  </td>
-                  <td>
-                    {% for device in object.objectdevice_set.all %}
-                      {{device.type}} {{device.model}}<br> 
-                    {% endfor %} 
-                  </td>
-                </tr>
-              {% endfor %}
+              {% if object_list.count == 0 %}
+                <p>Ничего не найдено</p>
+              {% else %}
+              <table class="table is-bordered is-striped is-fullwidth is-hoverable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Адрес объекта</th>
+                    <th>Ключевое лицо</th>
+                    <th>Дата договора</th>
+                    <th>Номер телефона</th>
+                    <th>Тип оборудования</th>   
+                  </tr>
+                </thead>
+                <tbody>
+                {% for object in object_list %}
+                
+                  <tr>
+                    <th>{{object.id}}</th>
+                    <td>
+                      <a href="/objects/{{object.id}}">{{object.get_full_address}}</a>
+                    </td>
+                    <td>
+                      {% for client in object.client_set.all %}
+                        {{client.firstname}} {{client.lastname}} {{client.middlename}} <br>
+                      {% endfor %} 
+                    </td>
+                    <td></td>
+                    <td>
+                      {% for client in object.client_set.all %}
+                      {{client.phone_number_1}} {{client.phone_number_2}} {{client.phone_number_3}}
+                      {% endfor %} 
+                    </td>
+                    <td>
+                      {% for device in object.objectdevice_set.all %}
+                        {{device.type}} {{device.model}}<br> 
+                      {% endfor %} 
+                    </td>
+                  </tr>
+                {% endfor %}
+                    
+                </tbody>
+              </table>
+              {% endif %}
               
-            </tbody>
-          </table>
           <!-- <nav class="pagination is-rounded" role="navigation" aria-label="pagination">
             <a href="#" class="pagination-previous">Назад</a>
             <a href="#" class="pagination-next">Дальше</a>
