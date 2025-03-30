@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import CreateView, ListView, DetailView, View, TemplateView
 from .models import Object, Client, Passport, ObjectDevice, DeviceModel, DeviceType, Contract, DeviceKind, DeviceManufacter, DeviceModification, ActPosition, Act, Master
-from .forms import LoginUserForm, ObjectCreateForm, PassportCreateForm, ClientFormSet, ContractCreateForm, ObjectDeviceFormSet, ActCreateForm, PositionFormSet
+from .forms import LoginUserForm, ObjectCreateForm, PassportCreateForm, ClientFormSet, ContractCreateForm, ObjectDeviceFormSet, ActCreateForm, PositionFormSet, AddClientFormSet
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
@@ -166,6 +166,7 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
             device_modification = DeviceModification.objects.filter(pk=int(devices[device]['modification']))[0] if devices[device]['modification'] else  None
 
             ObjectDevice.objects.create(
+                words_in_contract = devices[device]['words_in_contract'],
                 type = device_type,
                 model = device_model,
                 modification = device_modification,
@@ -202,7 +203,7 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
                 object = new_object,
             )
                 
-        pass
+        return redirect(f'/objects/{new_object.pk}')
         
 
 
@@ -397,4 +398,66 @@ class ContractCreateView(LoginRequiredMixin, TemplateView):
 
         
 
+        return redirect(f'/objects/{id}')
+
+
+def ToEditObject(request, id):
+    print('ok')
+    
+    current_object = Object.objects.filter(pk=id)[0]
+    current_object.to_edit = True
+    current_object.save()
+    return redirect(f'/objects/{id}')
+        
+
+def EditCommentObject(request, id):
+    
+    current_object = Object.objects.filter(pk=id)[0]
+    current_object.comment = request.POST['comment']
+    current_object.save()
+    return redirect(f'/objects/{id}')
+
+
+
+class AddContactView(LoginRequiredMixin, DetailView):
+    template_name = "app/object/add_contact.html"
+    model = Object
+    pk_url_kwarg = 'id'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['client_formset'] = AddClientFormSet(queryset=Client.objects.none(), prefix='client')
+        return context
+
+    def post(self, request, id):
+
+        clients = {}
+
+        data = request.POST.dict()
+        
+        current_object = Object.objects.filter(pk=id)[0]
+
+        for key in data.keys():
+            if key.startswith('client') and key[7].isdigit():
+                if key[7] in clients:
+                    clients[key[7]][key[9:]] = data[key]
+                else:
+                    clients[key[7]] = {
+                        key[9:]: data[key]
+                    }
+
+        print(clients)
+        for client in clients:
+            print(clients[client])
+            Client.objects.create(
+                firstname = clients[client]['firstname'],
+                lastname = clients[client]['lastname'],
+                middlename = clients[client]['middlename'],
+                role = clients[client]['role'],
+                sex = clients[client]['sex'],
+                phone_number_1 = clients[client]['phone_number_1'],
+                phone_number_2 = clients[client]['phone_number_2'],
+                phone_number_3 = clients[client]['phone_number_3'],
+                object = current_object,
+            )
+        
         return redirect(f'/objects/{id}')

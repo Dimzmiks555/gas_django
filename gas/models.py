@@ -29,6 +29,7 @@ class Object(models.Model):
     show_part = models.BooleanField(verbose_name="Отображать часть дома/квартиру в документах", blank=True, null=True)
     gas_date = models.DateField(verbose_name="Дата пуска газа", blank=True, null=True)
     comment = models.TextField(verbose_name="Примечание", blank=True, null=True)
+    to_edit = models.BooleanField(verbose_name="Пометка на редактирование", blank=True, null=True)
 
     def get_full_address(self):
         address = f'{self.type_of_city} {self.city}, {self.street_type} {self.street}, д. {self.house}, кв. {self.room}'
@@ -183,6 +184,7 @@ class DeviceModification(models.Model):
 
 class ObjectDevice(models.Model):
     object = models.ForeignKey(Object, on_delete = models.PROTECT, blank=True, null=True)
+    words_in_contract = models.CharField(max_length=256, verbose_name="В договоре", null=True)
     type = models.ForeignKey(DeviceType, on_delete=models.PROTECT, verbose_name='Категория оборудования')
     kind = models.ForeignKey(DeviceKind, on_delete=models.PROTECT, verbose_name='Тип', blank=True, null=True)
     modification = models.ForeignKey(DeviceModification, on_delete=models.PROTECT, verbose_name='Модификация', blank=True, null=True)

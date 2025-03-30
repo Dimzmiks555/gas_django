@@ -52,6 +52,7 @@ ObjectDeviceFormSet = forms.modelformset_factory(
     ObjectDevice, 
     fields=(
         "type", 
+        "words_in_contract",
         "model",
         "kind", 
         "modification", 
@@ -65,6 +66,9 @@ ObjectDeviceFormSet = forms.modelformset_factory(
  
 ClientFormSet = forms.modelformset_factory(
     Client, fields=('lastname', 'firstname','middlename','is_main','role','sex','phone_number_1','phone_number_2','phone_number_3'), extra=1
+)
+AddClientFormSet = forms.modelformset_factory(
+    Client, fields=('lastname', 'firstname','middlename','role','sex','phone_number_1','phone_number_2','phone_number_3'), extra=1
 )
 
 

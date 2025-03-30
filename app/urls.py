@@ -16,19 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include  
-from gas.views import Index, ObjectCreateView, ObjectIdView, ObjectListView, ContractCreateView, ActCreateFromContractView
+from gas.views import Index, ObjectCreateView, ObjectIdView, ObjectListView, ContractCreateView, ActCreateFromContractView, ToEditObject, EditCommentObject, AddContactView
 from old.views import imp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("/", Index),
+    path("", Index),
     path("import/", imp),
     path("accounts/", include("django.contrib.auth.urls")),  # new
     path("objects/", ObjectListView.as_view()),
     path("objects/<int:id>", ObjectIdView.as_view()),
+    path("objects/<int:id>/to_edit", ToEditObject),
+    path("objects/<int:id>/edit_comment", EditCommentObject),
+    path("objects/<int:id>/add_contact", AddContactView.as_view()),
     path("objects/<int:id>/contract/create", ContractCreateView.as_view()),
     path("objects/<int:id>/act/create_from_contract", ActCreateFromContractView.as_view()),
     path("objects/create/", ObjectCreateView.as_view()),
-    path('', include('pwa.urls'))
+    # path('', include('pwa.urls'))
 
 ]

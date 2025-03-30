@@ -88,7 +88,7 @@
                     <th>ID</th>
                     <th>Адрес объекта</th>
                     <th>Ключевое лицо</th>
-                    <th>Дата договора</th>
+                    <!-- <th>Дата договора</th> -->
                     <th>Номер телефона</th>
                     <th>Тип оборудования</th>   
                   </tr>
@@ -97,7 +97,13 @@
                 {% for object in object_list %}
                 
                   <tr>
-                    <th>{{object.id}}</th>
+                    <th>
+                      {% if object.to_edit %}
+                      <span class="tag is-warning">{{object.id}}</span>
+                      {% else %}
+                      {{object.id}}
+                      {% endif %}
+                    </th>
                     <td>
                       <a href="/objects/{{object.id}}">{{object.get_full_address}}</a>
                     </td>
@@ -106,7 +112,7 @@
                         {{client.firstname}} {{client.lastname}} {{client.middlename}} <br>
                       {% endfor %} 
                     </td>
-                    <td></td>
+                    <!-- <td></td> -->
                     <td>
                       {% for client in object.client_set.all %}
                       {{client.phone_number_1}} {{client.phone_number_2}} {{client.phone_number_3}}
@@ -114,7 +120,7 @@
                     </td>
                     <td>
                       {% for device in object.objectdevice_set.all %}
-                        {{device.type}} {{device.model}}<br> 
+                        {{device.type}} {{device.words_in_contract}}<br> 
                       {% endfor %} 
                     </td>
                   </tr>

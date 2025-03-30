@@ -161,3 +161,8 @@
 .object_devices__item {
 
 }
+
+.to_edit_mark {
+    font-size: 20px !important;
+    font-weight: bold;
+}

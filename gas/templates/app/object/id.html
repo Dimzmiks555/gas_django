@@ -2,6 +2,11 @@
 
 {% block main %}
 <a href="/objects" class="button mb-4">Назад</a>
+{% if object.to_edit %}
+<h3 class="ml-5 tag is-warning to_edit_mark">Помечен на редактирование! </h3>
+{% else %}
+<a href="/objects/{{object.id}}/to_edit" class="button mb-4 ml-3">Пометить на редактирование</a>
+{% endif %}
     <div class="columns">
         <div class="column">
             <div class="box">
@@ -11,21 +16,20 @@
                 <p class="title is-5">Адрес</p>
                 <h2 class="subtitle is-6 is-spaced">{{object.get_full_address}}</h2>
                 <p class="title is-5 ">Примечание</p>
-                <h2 class="subtitle is-6 is-spaced">
-                    {% if object.comment%}
-                    {{object.comment}}
-                    {% else %}
-                    Примечаний нет
-                    {% endif %}
-                </h2>
+                <form action="/objects/{{object.id}}/edit_comment" method="post">
+                    {% csrf_token %}
+                    <textarea class="textarea has-fixed-size" placeholder="Примечаний нет" name="comment" id="comment">{% if object.comment %}{{object.comment}}{% else %}{% endif %}</textarea>
+                    <button class="button is-fullwidth mt-2 is-primary" href="/objects/">Сохранить примечание</button>
+                </form>
             </div>
             <div class="box">
-                <h2 class="title">Контактные лица</h2>
+                <h2 class="title">Контактные лица 
+                <a href="/objects/{{object.id}}/add_contact" class="button mb-4 ml-4">Добавить</a></h2>
                 {% for client in object.client_set.all %}
                     <p>{{client.role}}</p>
                     <p class="title is-5 ">{{client.lastname}} {{client.firstname}} {{client.middlename}} 
                         {% if client.sex == 'man' %}
-                            <span class="tag is-info ">М</span>
+                            <span class="tag is-info">М</span>
                         {% else %}
                             <span class="tag is-danger ">Ж</span>
                         {% endif %}
@@ -106,6 +110,7 @@
                 <div class="object_devices__list">
                     {% for device in object.objectdevice_set.all %}
                     <div class="object_devices__item">
+                        <p class="title is-6 is-spaced">В договоре - {{device.words_in_contract}}</p>
                         <p class="title is-5 is-spaced">{{device.type}}</p>
                         <h2 class="subtitle is-6">{{ device.kind }}</h2>
                         <h2 class="subtitle is-6">{{ device.manufacter }}</h2>

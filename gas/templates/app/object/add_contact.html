@@ -1,0 +1,29 @@
+{% extends 'components/layout.html' %}
+
+{% block main %}
+<a href="/objects/{{object.id}}" class="button mb-4">Назад</a>
+    
+<div class="object_create_form">
+    <form action="/objects/{{object.id}}/add_contact" method="post">
+        {% csrf_token %}
+        <div class="object_create_form_section">
+            <div class="object_create_form_box">
+                <h3 class="title is-3">Данные клиента</h3>
+                <div>
+                    <div class="client_section">
+                        {{client_formset.management_form}}
+                        {% for form in client_formset %}
+                            <div class="client_add">
+                                {{form}}
+                            </div>
+                        {% endfor %}
+                    </div>  
+                </div>
+            </div>
+        </div>
+        
+        <button class="button is-primary" type="submit">Создать</button>
+
+    </form>
+</div>
+{% endblock main %}
