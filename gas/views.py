@@ -9,6 +9,9 @@ import datetime
 from .utils import generate_docx, get_pricelist_array, transform_date_month, get_full_address, generate_act
 from num2words import num2words
 from django.db.models import Q
+import os
+from django.conf import settings
+from django.http import HttpResponse, Http404, FileResponse
 
 
 
@@ -461,3 +464,32 @@ class AddContactView(LoginRequiredMixin, DetailView):
             )
         
         return redirect(f'/objects/{id}')
+
+
+
+def DownloadContractView(request, id):
+    
+
+    actual_contract = Contract.objects.filter(status="active", object=id)[0]
+
+    datee = actual_contract.date_of_contract
+    # datee = datetime.datetime(a)
+    
+
+    contract_name = f"Договор № {actual_contract.contract_number}-OBJ{id}-{datee.day}.{datee.month}.{datee.year}-{actual_contract.uuid_number}.docx"
+
+    print(contract_name)
+
+    file_path = os.path.join(f"{settings.BASE_DIR}/generated_docs/{contract_name}")
+
+    print(file_path)
+
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            # response = HttpResponse(fh.read(), content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            # response['Content-Disposition'] = 'attachment; filename=' + contract_name
+            response = FileResponse(open(file_path, 'rb'), as_attachment=True)
+            
+
+            return response
+    raise Http404
