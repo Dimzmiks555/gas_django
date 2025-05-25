@@ -476,7 +476,7 @@ def DownloadContractView(request, id):
     # datee = datetime.datetime(a)
     
 
-    contract_name = f"Договор № {actual_contract.contract_number}-OBJ{id}-{datee.day}.{datee.month}.{datee.year}-{actual_contract.uuid_number}.docx"
+    contract_name = f"Договор № {actual_contract.contract_number} от {datee.day}.{datee.month}.{datee.year}.docx"
 
     print(contract_name)
 
@@ -503,7 +503,7 @@ def DownloadActView(request, uuid_number):
     # datee = datetime.datetime(a)
     
 
-    act_name = f"Акт № {actual_act.act_number}-OBJ{actual_act.object.pk}-{datee.day}.{datee.month}.{datee.year}-{actual_act.uuid_number}.docx"
+    act_name = f"Акт № {actual_act.act_number} от {datee.day}.{datee.month}.{datee.year}.docx"
 
     print(act_name)
 
