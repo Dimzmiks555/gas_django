@@ -297,7 +297,7 @@ class ActCreateFromContractView(LoginRequiredMixin, TemplateView):
             'f': client[0].lastname,
             'i': client[0].firstname,
             'o': client[0].middlename,
-            'full_address': get_full_address(data=current_object[0]),
+            'full_address': current_object[0].passport.registration_adress,
             'initials': f'{client[0].lastname} {client[0].firstname[:1]}. {client[0].middlename[:1]}.',
             'master_initials': f'{master.lastname} {master.firstname[:1]}. {master.middlename[:1]}.',
             'phone_number': client[0].phone_number_1,

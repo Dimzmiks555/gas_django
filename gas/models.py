@@ -61,6 +61,9 @@ class Client(models.Model):
         verbose_name = 'Клиент'
         verbose_name_plural = 'Клиенты'
 
+    def __str__(self): # new
+        return f'{self.firstname} {self.lastname} {self.middlename} № {self.pk}'
+
 
 class Passport(models.Model):
     serial = models.CharField(max_length=12, verbose_name="Серия")
