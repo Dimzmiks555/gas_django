@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include  
-from gas.views import Index, ObjectCreateView, ObjectIdView, ObjectListView, ContractCreateView, ActCreateFromContractView, ToEditObject, EditCommentObject, AddContactView, DownloadContractView
+from gas.views import Index, ObjectCreateView, ObjectIdView, ObjectListView, ContractCreateView, ActCreateFromContractView, ToEditObject, EditCommentObject, AddContactView, DownloadContractView, DownloadActView
 from old.views import imp
 from django.conf import settings
 
@@ -26,6 +26,7 @@ urlpatterns = [
     path("", Index),
     path("import/", imp),
     path('download/contract/<int:id>/', DownloadContractView),
+    path('download/act/<str:uuid_number>/', DownloadActView),
     path("accounts/", include("django.contrib.auth.urls")),  # new
     path("objects/", ObjectListView.as_view()),
     path("objects/<int:id>", ObjectIdView.as_view()),

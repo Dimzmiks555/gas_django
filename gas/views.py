@@ -89,8 +89,8 @@ class ObjectListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['device_formset'] = ObjectDeviceFormSet(queryset=ObjectDevice.objects.none())
-        if self.queryset:
-            context['total'] = self.queryset.count()
+        if self.object_list:
+            context['total'] = self.object_list.count()
         else:
             context['total'] = 0
         return context
@@ -481,6 +481,33 @@ def DownloadContractView(request, id):
     print(contract_name)
 
     file_path = os.path.join(f"{settings.BASE_DIR}/generated_docs/{contract_name}")
+
+    print(file_path)
+
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            # response = HttpResponse(fh.read(), content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+            # response['Content-Disposition'] = 'attachment; filename=' + contract_name
+            response = FileResponse(open(file_path, 'rb'), as_attachment=True)
+            
+
+            return response
+    raise Http404
+
+def DownloadActView(request, uuid_number):
+    
+
+    actual_act = Act.objects.filter(uuid_number=uuid_number)[0]
+
+    datee = actual_act.date_of_act
+    # datee = datetime.datetime(a)
+    
+
+    act_name = f"Акт № {actual_act.act_number}-OBJ{actual_act.object.pk}-{datee.day}.{datee.month}.{datee.year}-{actual_act.uuid_number}.docx"
+
+    print(act_name)
+
+    file_path = os.path.join(f"{settings.BASE_DIR}/generated_docs/{act_name}")
 
     print(file_path)
 

@@ -84,7 +84,7 @@
                 <h2 class="title">Акты выполненных работ</h2>
                 {% if object.act_set.count > 0 %}
                     {% for act in object.act_set.all %}
-                        <p class="title is-5 ">Акт № {{act.act_number}} от {{act.date_of_act}}</p>
+                        <a class="title is-5 link" href="/download/act/{{act.pk}}">Акт № {{act.act_number}} от {{act.date_of_act}}</a>
                         <p class="subtitle is-5 mb-2">Сумма {{act.total}}</p>
                         <!-- {% if contract.status != 'active' %}
                             <a href="/objects/{{object.id}}/contract/create" class="button mt-2">Добавить</a>
@@ -107,21 +107,32 @@
         <div class="column">
             <div class="box">
                 <h2 class="title">Оборудование</h2>
-                <div class="object_devices__list">
+                <table class="object_devices__table">
+                    <tr>
+                        <th>Оборудование</th>
+                        <th>В договоре</th>
+                        <th>Вид</th>
+                        <th>Производитель</th>
+                        <th>Модель</th>
+                        <th>Модификация</th>
+                        <th>S/N</th>
+                        <th>Дата производства</th>
+                        <th>Дата поверки</th>
+                    </tr>
                     {% for device in object.objectdevice_set.all %}
-                    <div class="object_devices__item">
-                        <p class="title is-6 is-spaced">В договоре - {{device.words_in_contract}}</p>
-                        <p class="title is-5 is-spaced">{{device.type}}</p>
-                        <h2 class="subtitle is-6">{{ device.kind }}</h2>
-                        <h2 class="subtitle is-6">{{ device.manufacter }}</h2>
-                        <h2 class="subtitle is-6">{{ device.model }}</h2>
-                        <h2 class="subtitle is-6">{{ device.modification }}</h2>
-                        <h2 class="subtitle is-6">S/N {{ device.sn }}</h2>
-                        <h2 class="subtitle is-6">Дата производства {{ device.date_of_manufacture }}</h2>
-                        <h2 class="subtitle is-6">Дата поверки {{ device.date_of_commissioning }}</h2>
-                    </div>
+                    <tr class="object_devices__item">
+                        <td class="title is-5">{{device.type}}</td>
+                        <td class="title is-6">{{device.words_in_contract}}</td>
+                        <td class="subtitle is-6">{{ device.kind }}</td>
+                        <td class="subtitle is-6">{{ device.manufacter }}</td>
+                        <td class="subtitle is-6">{{ device.model }}</td>
+                        <td class="subtitle is-6">{{ device.modification }}</td>
+                        <td class="subtitle is-6">{{ device.sn }}</td>
+                        <td class="subtitle is-6">{{ device.date_of_manufacture }}</td>
+                        <td class="subtitle is-6">{{ device.date_of_commissioning }}</td>
+                    </tr>
                     {% endfor %}
-                </div>
+                </table>
             </div>
         </div>
     </div>

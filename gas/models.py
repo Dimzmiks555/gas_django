@@ -92,7 +92,7 @@ class Master(models.Model):
 
 class Contract(models.Model):
     object = models.ForeignKey(Object, on_delete = models.PROTECT, blank=True, null=True)
-    contract_number = models.IntegerField(verbose_name="Номер")
+    contract_number = models.CharField(max_length=10, verbose_name="Номер")
     status = models.CharField(max_length=50, verbose_name="Статус")
     uuid_number = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     date_of_contract = models.DateField(verbose_name="Дата", default=datetime.datetime.now())

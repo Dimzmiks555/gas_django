@@ -158,6 +158,17 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
+.object_devices__table {
+    width: 100%;
+}
+
+.object_devices__table th {
+    padding: 10px 3px;
+}
+.object_devices__table td {
+    padding: 10px 3px;
+}
+
 .object_devices__item {
 
 }

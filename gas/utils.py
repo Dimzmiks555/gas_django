@@ -50,7 +50,7 @@ def get_full_address(data):
 
     data.type_of_city = data.type_of_city[:1].lower() + data.type_of_city[1:]
 
-    string = f'{data.region} обл., {data.area} район, {data.type_of_city} {data.city}, {data.street_type} {data.street}, д. {data.house} {data.type_of_building} {data.room}' 
+    string = f'{data.region} обл., {data.area} район, {data.type_of_city} {data.city}, {data.street_type} {data.street}, д. {data.house}, {data.type_of_building} {data.room}' 
     return string
 
 def get_pricelist_array(object):
@@ -86,6 +86,18 @@ def get_pricelist_array(object):
             'price': 0,
             'total': 0
         },
+        '19': {
+            'name': 'Техническое обслуживание газовой колонки',
+            'amount': 0,
+            'price': 0,
+            'total': 0
+        },
+        '20': {
+            'name': 'Инструктаж потребителя газа',
+            'amount': 1,
+            'price': 0,
+            'total': 0
+        },
     }
 
     for p in list:
@@ -98,12 +110,19 @@ def get_pricelist_array(object):
         if len(pr) > 0:
             if 'Техническое обслуживание котла' in pr[0].name:
                 list['14']['amount'] += 1
+                list['14']['price'] = pr[0].price
             elif 'Техническое обслуживание плиты газовой' in pr[0].name:
                 list['15']['amount'] += 1
+                list['15']['price'] = pr[0].price
             elif 'Техническое обслуживание духового шкафа' in pr[0].name:
                 list['16']['amount'] += 1
+                list['16']['price'] = pr[0].price
             elif 'Техническое обслуживание сигнализатора' in pr[0].name:
                 list['18']['amount'] += 1
+                list['18']['price'] = pr[0].price
+            elif 'Техническое обслуживание газовой колонки' in pr[0].name:
+                list['19']['amount'] += 1
+                list['19']['price'] = pr[0].price
     
     print(list)
 
