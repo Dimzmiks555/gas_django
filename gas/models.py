@@ -80,6 +80,9 @@ class Passport(models.Model):
         verbose_name = 'Паспорт'
         verbose_name_plural = 'Паспорта'
 
+    def __str__(self): # new
+        return f'{self.serial} {self.passport_number}, Объект № {self.object.pk}'
+
 
 class Master(models.Model):
     lastname = models.CharField(max_length=256, verbose_name="Фамилия")
