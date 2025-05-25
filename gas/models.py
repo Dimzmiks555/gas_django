@@ -54,7 +54,7 @@ class Client(models.Model):
     phone_number_1 = models.CharField(max_length=256, verbose_name="Номер телефона 1")
     phone_number_2 = models.CharField(max_length=256, verbose_name="Номер телефона 2", blank=True, null=True)
     phone_number_3 = models.CharField(max_length=256, verbose_name="Номер телефона 3", blank=True, null=True)
-    object = models.ForeignKey(to=Object, verbose_name='Объект', on_delete=models.PROTECT)
+    object = models.ForeignKey(to=Object, verbose_name='Объект', on_delete=models.CASCADE)
 
     
     class Meta:
@@ -74,7 +74,7 @@ class Passport(models.Model):
     birthday_date = models.DateField(verbose_name="День рождения", blank=True, null=True)
     birthday_place = models.CharField(max_length=255, verbose_name="Место рождения")
     registration_adress = models.CharField(max_length=255, verbose_name="Адрес регистрации")
-    object = models.OneToOneField(to=Object, verbose_name='Объект', on_delete=models.PROTECT)
+    object = models.OneToOneField(to=Object, verbose_name='Объект', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Паспорт'
@@ -106,11 +106,14 @@ class Contract(models.Model):
     class Meta:
         verbose_name = 'Договор'
         verbose_name_plural = 'Договора'
+    
+    def __str__(self): # new
+        return f'Договор № {self.contract_number} от {self.date_of_contract}'
 
  
 
 class Act(models.Model):
-    object = models.ForeignKey(Object, on_delete = models.PROTECT, blank=True, null=True)
+    object = models.ForeignKey(Object, on_delete = models.CASCADE, blank=True, null=True)
     master = models.ForeignKey(Master, on_delete=models.PROTECT, verbose_name="Мастер")
     act_number = models.CharField(max_length=256, verbose_name="Номер")
     uuid_number = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
@@ -125,7 +128,7 @@ class Act(models.Model):
     
 
 class ActPosition(models.Model):
-    act = models.ForeignKey(Act, on_delete = models.PROTECT, blank=True, null=True)
+    act = models.ForeignKey(Act, on_delete = models.CASCADE, blank=True, null=True)
     name = models.CharField(max_length=256, verbose_name="Название")
     amount = models.IntegerField(verbose_name="Количество")
     price = models.DecimalField(decimal_places=2, max_digits=10, verbose_name="Цена")
@@ -186,7 +189,7 @@ class DeviceModification(models.Model):
         verbose_name_plural = 'Модификации оборудования'
 
 class ObjectDevice(models.Model):
-    object = models.ForeignKey(Object, on_delete = models.PROTECT, blank=True, null=True)
+    object = models.ForeignKey(Object, on_delete = models.CASCADE, blank=True, null=True)
     words_in_contract = models.CharField(max_length=256, verbose_name="В договоре", null=True)
     type = models.ForeignKey(DeviceType, on_delete=models.PROTECT, verbose_name='Категория оборудования')
     kind = models.ForeignKey(DeviceKind, on_delete=models.PROTECT, verbose_name='Тип', blank=True, null=True)
