@@ -168,12 +168,18 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
             device_manufacter = DeviceManufacter.objects.filter(pk=int(devices[device]['manufacter']))[0] if devices[device]['manufacter'] else  None
             device_modification = DeviceModification.objects.filter(pk=int(devices[device]['modification']))[0] if devices[device]['modification'] else  None
 
+            
+
+
             ObjectDevice.objects.create(
                 words_in_contract = devices[device]['words_in_contract'],
                 type = device_type,
-                model = device_model,
+                model = device_model,   
                 modification = device_modification,
                 kind = device_kind,
+                sn = devices[device]['sn'],
+                date_of_manufacture = datetime.datetime.strptime(devices[device]['date_of_manufacture'], '%d.%m.%y').strftime('%Y-%m-%d'),
+                date_of_commissioning = datetime.datetime.strptime(devices[device]['date_of_commissioning'], '%d.%m.%y').strftime('%Y-%m-%d'),
                 manufacter = device_manufacter,
                 object = new_object,
             )
