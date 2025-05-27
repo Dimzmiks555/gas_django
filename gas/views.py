@@ -211,12 +211,18 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
                     }
         for client in clients:
             print(clients[client])
+
+            is_main_formatted = False
+
+            if clients[client]['is_main']:
+                is_main_formatted = True if clients[client]['is_main'] == 'on' else False
+
             Client.objects.create(
                 firstname = clients[client]['firstname'],
                 lastname = clients[client]['lastname'],
                 middlename = clients[client]['middlename'],
                 # is_main = True,
-                is_main = True if clients[client]['is_main'] == 'on' else False,
+                is_main = is_main_formatted,
                 role = clients[client]['role'],
                 sex = clients[client]['sex'],
                 phone_number_1 = clients[client]['phone_number_1'],
