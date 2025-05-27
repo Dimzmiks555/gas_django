@@ -84,7 +84,7 @@ class ObjectListView(LoginRequiredMixin, ListView):
 
         # print(last_name)
 
-        return Object.objects.filter(Q(**filter_object)).order_by('-pk')
+        return Object.objects.filter(Q(**filter_object)).order_by('-pk').distinct()
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -131,13 +131,8 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
         )
 
 
-        # new_phone = Phone.objects.create(
-        #     phone_number = data['phone_number'],
-        #     client = new_client,
-        # )
-
         
-        new_passport = Passport.objects.create(
+        Passport.objects.create(
             serial = data['serial'],
             passport_number = data['passport_number'],
             getted_by = data['getted_by'],
@@ -221,7 +216,6 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
                 firstname = clients[client]['firstname'],
                 lastname = clients[client]['lastname'],
                 middlename = clients[client]['middlename'],
-                # is_main = True,
                 is_main = is_main_formatted,
                 role = clients[client]['role'],
                 sex = clients[client]['sex'],

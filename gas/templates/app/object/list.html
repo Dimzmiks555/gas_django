@@ -89,8 +89,8 @@
                     <th>Адрес объекта</th>
                     <th>Ключевое лицо</th>
                     <!-- <th>Дата договора</th> -->
-                    <th>Номер телефона</th>
-                    <th>Тип оборудования</th>   
+                    <th>Телефон</th>
+                    <th>Оборудование</th>   
                   </tr>
                 </thead>
                 <tbody>
@@ -109,13 +109,13 @@
                     </td>
                     <td>
                       {% for client in object.client_set.all %}
-                        {{client.firstname}} {{client.lastname}} {{client.middlename}} <br>
+                        {{client.lastname}} {{client.firstname}} {{client.middlename}} <br>
                       {% endfor %} 
                     </td>
                     <!-- <td></td> -->
                     <td>
                       {% for client in object.client_set.all %}
-                      {{client.phone_number_1}} {{client.phone_number_2}} {{client.phone_number_3}}
+                      {{client.phone_number_1}}<br>{{client.phone_number_2}} <br> {{client.phone_number_3}}
                       {% endfor %} 
                     </td>
                     <td>

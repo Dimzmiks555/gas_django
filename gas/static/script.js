@@ -205,12 +205,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // clone.querySelector('span').innerHTML = clientFormNum + 1
         clone.innerHTML = clone.innerHTML.replace(formRegex, `client-${clientFormNum}-`)
+
+        clone.querySelector('input[type="checkbox"]').parentNode.remove()
         
         clientSection.appendChild(clone);
         
         clientTotalForms.setAttribute('value', `${clientFormNum+1}`)
-
-
 
     }
 
