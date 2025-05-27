@@ -214,7 +214,7 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
 
             is_main_formatted = False
 
-            if clients[client]['is_main']:
+            if 'is_main' in clients[client]:
                 is_main_formatted = True if clients[client]['is_main'] == 'on' else False
 
             Client.objects.create(
