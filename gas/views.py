@@ -168,7 +168,18 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
             device_manufacter = DeviceManufacter.objects.filter(pk=int(devices[device]['manufacter']))[0] if devices[device]['manufacter'] else  None
             device_modification = DeviceModification.objects.filter(pk=int(devices[device]['modification']))[0] if devices[device]['modification'] else  None
 
-            
+            date_of_manufacture__formatted = None
+            date_of_commissioning__formatted = None
+
+            if (len(devices[device]['date_of_manufacture']) >= 10):
+                date_of_manufacture__formatted = datetime.datetime.strptime(devices[device]['date_of_manufacture'], '%d.%m.%Y')
+            else:
+                date_of_manufacture__formatted = datetime.datetime.strptime(devices[device]['date_of_manufacture'], '%d.%m.%y')
+
+            if (len(devices[device]['date_of_commissioning']) >= 10):
+                date_of_commissioning__formatted = datetime.datetime.strptime(devices[device]['date_of_commissioning'], '%d.%m.%Y')
+            else:
+                date_of_commissioning__formatted = datetime.datetime.strptime(devices[device]['date_of_commissioning'], '%d.%m.%y')
 
 
             ObjectDevice.objects.create(
@@ -178,8 +189,8 @@ class ObjectCreateView(LoginRequiredMixin, TemplateView):
                 modification = device_modification,
                 kind = device_kind,
                 sn = devices[device]['sn'],
-                date_of_manufacture = datetime.datetime.strptime(devices[device]['date_of_manufacture'], '%d.%m.%y').strftime('%Y-%m-%d'),
-                date_of_commissioning = datetime.datetime.strptime(devices[device]['date_of_commissioning'], '%d.%m.%y').strftime('%Y-%m-%d'),
+                date_of_manufacture = date_of_manufacture__formatted.strftime('%Y-%m-%d'),
+                date_of_commissioning = date_of_commissioning__formatted.strftime('%Y-%m-%d'),
                 manufacter = device_manufacter,
                 object = new_object,
             )
