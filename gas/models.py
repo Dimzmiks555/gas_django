@@ -101,7 +101,7 @@ class Contract(models.Model):
     contract_number = models.CharField(max_length=10, verbose_name="Номер")
     status = models.CharField(max_length=50, verbose_name="Статус")
     uuid_number = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
-    date_of_contract = models.DateField(verbose_name="Дата", default=datetime.datetime.now())
+    date_of_contract = models.DateField(verbose_name="Дата", default=datetime.date.today)
     summ = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма")
     
     # positions = models.CharField(max_length=255, verbose_name="Выдан")
@@ -120,7 +120,7 @@ class Act(models.Model):
     master = models.ForeignKey(Master, on_delete=models.PROTECT, verbose_name="Мастер")
     act_number = models.CharField(max_length=256, verbose_name="Номер")
     uuid_number = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
-    date_of_act = models.DateField(verbose_name="Дата", default=datetime.datetime.now())
+    date_of_act = models.DateField(verbose_name="Дата", default=datetime.date.today)
     total = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма акта")
     
     # positions = models.CharField(max_length=255, verbose_name="Выдан")

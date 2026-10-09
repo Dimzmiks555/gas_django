@@ -1,6 +1,7 @@
 from docxtpl import DocxTemplate
 import datetime
 from pathlib import Path
+from django.conf import settings
 import uuid
 from .models import Price 
 
@@ -12,19 +13,19 @@ def generate_docx(data, uuid):
 
     contract = DocxTemplate(BASE_DIR / "docx/contract.docx")
     contract.render(data)
-    contract.save(BASE_DIR / f"generated_docs/Договор № {data['contract_number']} от {data['date_day']}.{data['date_month']}.{data['date_year']}.docx")
+    contract.save(settings.GENERATED_DOCS_ROOT / f"Договор № {data['contract_number']} от {data['date_day']}.{data['date_month']}.{data['date_year']}.docx")
     
     # act = DocxTemplate(BASE_DIR / "docx/act.docx")
     # act.render(data)
-    # act.save(BASE_DIR / f"generated_docs/Акт № {data['contract_number']}-OBJ{data['object_id']}-{data['date_day']}.{data['date_month']}.{data['date_year']}-{uuid_number}.docx")
+    # act.save(settings.GENERATED_DOCS_ROOT / f"Акт № {data['contract_number']}-OBJ{data['object_id']}-{data['date_day']}.{data['date_month']}.{data['date_year']}-{uuid_number}.docx")
     
     # one = DocxTemplate(BASE_DIR / "docx/1.docx")
     # one.render(data)
-    # one.save(BASE_DIR / f"generated_docs/Приложение № 1 к договору № {data['contract_number']}-OBJ{data['object_id']}-{data['date_day']}.{data['date_month']}.{data['date_year']}-{uuid_number}.docx")
+    # one.save(settings.GENERATED_DOCS_ROOT / f"Приложение № 1 к договору № {data['contract_number']}-OBJ{data['object_id']}-{data['date_day']}.{data['date_month']}.{data['date_year']}-{uuid_number}.docx")
     
     # two = DocxTemplate(BASE_DIR / "docx/2.docx")
     # two.render(data)
-    # two.save(BASE_DIR / f"generated_docs/Приложение № 2 к договору № {data['contract_number']}-OBJ{data['object_id']}-{data['date_day']}.{data['date_month']}.{data['date_year']}-{uuid_number}.docx")
+    # two.save(settings.GENERATED_DOCS_ROOT / f"Приложение № 2 к договору № {data['contract_number']}-OBJ{data['object_id']}-{data['date_day']}.{data['date_month']}.{data['date_year']}-{uuid_number}.docx")
     
 def generate_act(data, uuid):
 
@@ -32,7 +33,7 @@ def generate_act(data, uuid):
 
     act = DocxTemplate(BASE_DIR / "docx/act.docx")
     act.render(data)
-    act.save(BASE_DIR / f"generated_docs/Акт № {data['act_number']} от {data['date_day']}.{data['date_month']}.{data['date_year']}.docx")
+    act.save(settings.GENERATED_DOCS_ROOT / f"Акт № {data['act_number']} от {data['date_day']}.{data['date_month']}.{data['date_year']}.docx")
    
 
 def transform_date_month(date, separator):

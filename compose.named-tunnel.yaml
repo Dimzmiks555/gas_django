@@ -1,0 +1,13 @@
+# docker compose -f compose.yaml -f compose.named-tunnel.yaml --profile tunnel up -d
+# Save the tunnel token in secrets/cloudflared-token (mode 600, owner UID 1000).
+services:
+  tunnel:
+    user: "1000:1000"
+    command: [tunnel, --no-autoupdate, --protocol, http2, --metrics, "127.0.0.1:20242", run, --token-file, /run/secrets/cloudflared-token]
+    volumes:
+      - type: bind
+        source: ./secrets/cloudflared-token
+        target: /run/secrets/cloudflared-token
+        read_only: true
+        bind:
+          create_host_path: false

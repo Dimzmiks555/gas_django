@@ -499,7 +499,7 @@ def DownloadContractView(request, id):
 
     print(contract_name)
 
-    file_path = os.path.join(f"{settings.BASE_DIR}/generated_docs/{contract_name}")
+    file_path = str(settings.GENERATED_DOCS_ROOT / contract_name)
 
     print(file_path)
 
@@ -526,7 +526,7 @@ def DownloadActView(request, uuid_number):
 
     print(act_name)
 
-    file_path = os.path.join(f"{settings.BASE_DIR}/generated_docs/{act_name}")
+    file_path = str(settings.GENERATED_DOCS_ROOT / act_name)
 
     print(file_path)
 

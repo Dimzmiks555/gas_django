@@ -116,12 +116,12 @@
                         <th>Модель</th>
                         <th>Модификация</th>
                         <th>S/N</th>
-                        <th>Дата производства</th>
+                        <th>Дата произв.</th>
                         <th>Дата поверки</th>
                     </tr>
                     {% for device in object.objectdevice_set.all %}
                     <tr class="object_devices__item">
-                        <td class="title is-5">{{device.type}}</td>
+                        <td class="title is-6">{{device.type}}</td>
                         <td class="title is-6">{{device.words_in_contract}}</td>
                         <td class="subtitle is-6">{{ device.kind }}</td>
                         <td class="subtitle is-6">{{ device.manufacter }}</td>

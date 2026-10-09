@@ -160,4 +160,12 @@ cython_debug/
 #.idea/
 
 /generated_docs
-migrations
+
+.env.*
+!.env.example
+/staticfiles/
+/backups/
+.DS_Store
+
+/seed/
+/secrets/

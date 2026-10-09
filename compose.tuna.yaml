@@ -1,0 +1,18 @@
+services:
+  tuna:
+    image: yuccastream/tuna@sha256:14c012ed1bba969c8484fe44c6029d2aa772b3c709ff97e66ed45599cd02001e
+    profiles: [tuna]
+    network_mode: host
+    user: "1000:1000"
+    restart: unless-stopped
+    env_file: ./secrets/tuna.env
+    command: [http, "127.0.0.1:8001", --subdomain=silver-salmon-0972, --location=ru, --inspect=false, --https-redirect, --log=stdout]
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

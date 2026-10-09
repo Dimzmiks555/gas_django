@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0i^9bcqmu0+5o)^r*l1)8t*_-ul(x#dh&r1q@pf-pcb*i#0x4)'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-local-development-only')
 PWA_SERVICE_WORKER_PATH = BASE_DIR / 'gas/static' / 'serviceworker.js'
                                        
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -91,7 +91,7 @@ DATABASES = {
         "NAME": "gas",
         "ENGINE": "django.db.backends.mysql",
         "USER": "root",
-        "PASSWORD": "Eltoro2021!",
+        "PASSWORD": os.environ.get("IMPORT_DB_PASSWORD", ""),
         'HOST':'localhost',
         'PORT':'3306',
     },
@@ -177,3 +177,5 @@ PWA_APP_SPLASH_SCREEN = [
 ]
 PWA_APP_DIR = 'ltr'
 PWA_APP_LANG = 'ru-RU'
+
+GENERATED_DOCS_ROOT = BASE_DIR / "generated_docs"
