@@ -87,6 +87,12 @@ def get_pricelist_array(object):
             'price': 0,
             'total': 0
         },
+        '21': {
+            'name': 'Техническое обслуживание электромагнитного клапана',
+            'amount': 0,
+            'price': 0,
+            'total': 0
+        },
         '19': {
             'name': 'Техническое обслуживание газовой колонки',
             'amount': 0,
@@ -121,11 +127,13 @@ def get_pricelist_array(object):
             elif 'Техническое обслуживание сигнализатора' in pr[0].name:
                 list['18']['amount'] += 1
                 list['18']['price'] = pr[0].price
+            elif 'Техническое обслуживание электромагнитного клапана' in pr[0].name:
+                list['21']['amount'] += 1
+                list['21']['price'] = pr[0].price
             elif 'Техническое обслуживание газовой колонки' in pr[0].name:
                 list['19']['amount'] += 1
                 list['19']['price'] = pr[0].price
     
-    print(list)
 
     for p in list:
         list[p]['total'] = list[p]['amount'] * list[p]['price']
