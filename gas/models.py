@@ -124,7 +124,11 @@ class FormSubmission(models.Model):
 
 class Act(models.Model):
     object = models.ForeignKey(Object, on_delete = models.CASCADE, blank=True, null=True)
-    master = models.ForeignKey(Master, on_delete=models.PROTECT, verbose_name="Мастер")
+    master = models.ForeignKey(Master, on_delete=models.PROTECT, verbose_name="Мастер", blank=True, null=True)
+    is_posted = models.BooleanField(default=False, verbose_name="Проведён")
+    to_edit = models.BooleanField(default=False, verbose_name="Помечен на редактирование")
+    revision = models.PositiveIntegerField(default=0, editable=False)
+    document_file = models.CharField(max_length=128, blank=True, editable=False)
     act_number = models.CharField(max_length=256, verbose_name="Номер")
     uuid_number = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     date_of_act = models.DateField(verbose_name="Дата", default=datetime.date.today)
@@ -135,6 +139,12 @@ class Act(models.Model):
     class Meta:
         verbose_name = 'Акт'
         verbose_name_plural = 'Акты'
+        constraints = [models.CheckConstraint(condition=models.Q(is_posted=False) | models.Q(master__isnull=False), name='posted_act_requires_master')]
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.is_posted and not self.master_id:
+            raise ValidationError({'master': 'Для проведения акта выберите мастера.'})
     
 
 class ActPosition(models.Model):

@@ -17,11 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include  
 from gas.views import Index, ObjectCreateView, ObjectIdView, ObjectListView, ContractCreateView, ActCreateFromContractView, ToEditObject, EditCommentObject, AddContactView, DownloadContractView, DownloadActView
+from gas.views import ActEditView
 from old.views import imp
 from django.conf import settings
 
 
 urlpatterns = [
+    path('objects/<int:object_id>/acts/<uuid:act_id>/', ActEditView.as_view(), name='act-edit'),
     path('admin/', admin.site.urls),
     path("", Index),
     path("import/", imp),

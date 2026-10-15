@@ -82,3 +82,12 @@ class ActPositionForm(forms.Form):
 PositionFormSet = forms.formset_factory(
     ActPositionForm, extra=1
 )
+
+class ActEditForm(forms.ModelForm):
+    revision = forms.IntegerField(widget=forms.HiddenInput)
+
+    class Meta:
+        model = Act
+        fields = ['date_of_act', 'master']
+        widgets = {'date_of_act': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'input'}),
+                   'master': forms.Select(attrs={'class': 'input'})}

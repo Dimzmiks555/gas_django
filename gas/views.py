@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic import CreateView, ListView, DetailView, View, TemplateView
 from .models import Object, Client, Passport, ObjectDevice, DeviceModel, DeviceType, Contract, DeviceKind, DeviceManufacter, DeviceModification, ActPosition, Act, Master
 from .forms import LoginUserForm, ObjectCreateForm, PassportCreateForm, ClientFormSet, ContractCreateForm, ObjectDeviceFormSet, ActCreateForm, PositionFormSet, AddClientFormSet
@@ -12,6 +12,9 @@ from django.db.models import Q
 import os
 from django.conf import settings
 from django.http import HttpResponse, Http404, FileResponse
+from django.core.exceptions import ValidationError
+from .forms import ActEditForm
+from .act_documents import document_path, initials, prepare_revision, store_revision
 
 
 
@@ -276,6 +279,12 @@ class ActCreateFromContractView(LoginRequiredMixin, TemplateView):
     
     def post(self, request, id):
 
+        form = ActCreateForm(request.POST)
+        if not form.is_valid():
+            context = self.get_context_data()
+            context['act_form'] = form
+            return self.render_to_response(context)
+
         current_object = Object.objects.filter(pk=id)
         client = Client.objects.filter(object=id, role="Собственник")
         actual_contract = Contract.objects.filter(object=current_object[0], status="active")[0]
@@ -302,7 +311,7 @@ class ActCreateFromContractView(LoginRequiredMixin, TemplateView):
         for p in prices:
             total_summ += prices[p]['total']
 
-        master = Master.objects.filter(pk=act_data['master'])[0]
+        master = form.cleaned_data['master']
 
         data = {
             **act_data,
@@ -318,7 +327,7 @@ class ActCreateFromContractView(LoginRequiredMixin, TemplateView):
             'o': client[0].middlename,
             'full_address': get_full_address(data=current_object[0]),
             'initials': f'{client[0].lastname} {client[0].firstname[:1]}. {client[0].middlename[:1]}.',
-            'master_initials': f'{master.lastname} {master.firstname[:1]}. {master.middlename[:1]}.',
+            'master_initials': initials(master),
             'phone_number': client[0].phone_number_1,
             'passport': current_object[0].passport,
             'getted_date': getted_date_str,
@@ -328,7 +337,6 @@ class ActCreateFromContractView(LoginRequiredMixin, TemplateView):
 
         }
 
-        print(act_data['master'])
 
         new_act = Act.objects.create(act_number=data['act_number'], date_of_act=act_full_date_str_for_db, total=total_summ, object=current_object[0], master = master)
 
@@ -528,9 +536,7 @@ def DownloadActView(request, uuid_number):
 
     print(act_name)
 
-    file_path = settings.GENERATED_DOCS_ROOT / f'act-{actual_act.uuid_number}.docx'
-    if not file_path.exists():
-        file_path = settings.GENERATED_DOCS_ROOT / act_name
+    file_path = document_path(actual_act)
 
     print(file_path)
 
@@ -543,3 +549,54 @@ def DownloadActView(request, uuid_number):
 
             return response
     raise Http404
+
+
+class ActEditView(LoginRequiredMixin, View):
+    template_name = 'app/act/edit.html'
+
+    def get_act(self, object_id, act_id):
+        return get_object_or_404(Act.objects.select_related('master'), pk=act_id, object_id=object_id)
+
+    def show(self, request, act, form=None, error=None):
+        form = form or ActEditForm(instance=act, initial={'revision': act.revision})
+        response = render(request, self.template_name, {'act': act, 'form': form, 'error': error,
+                      'saved': request.GET.get('saved') == '1'})
+        response['X-Frame-Options'] = 'SAMEORIGIN'
+        return response
+
+    def get(self, request, object_id, act_id):
+        return self.show(request, self.get_act(object_id, act_id))
+
+    def post(self, request, object_id, act_id):
+        # SubmissionMiddleware holds the write transaction before this read.
+        act = self.get_act(object_id, act_id)
+        action = request.POST.get('action')
+        if action == 'mark' and act.is_posted:
+            act.to_edit = True
+            act.save(update_fields=['to_edit'])
+        else:
+            if act.is_posted:
+                return self.show(request, act, error='Проведённый акт нельзя редактировать. Пометьте его для администратора.')
+            if action not in ('save', 'post'):
+                return self.show(request, act, error='Неизвестное действие.')
+            form = ActEditForm(request.POST, instance=act)
+            previous = self.get_act(object_id, act_id)
+            if not form.is_valid():
+                return self.show(request, previous, form=form)
+            if form.cleaned_data['revision'] != previous.revision:
+                return self.show(request, previous, error='Акт уже изменён в другой вкладке. Проверьте актуальные данные и повторите действие.')
+            if action == 'post' and not form.cleaned_data['master']:
+                form.add_error('master', 'Для проведения акта выберите мастера.')
+                return self.show(request, previous, form=form)
+            changed = (act.date_of_act != previous.date_of_act or act.master_id != previous.master_id)
+            if changed:
+                try:
+                    content = prepare_revision(previous, act.date_of_act, act.master)
+                except ValidationError as error:
+                    form.add_error(None, error)
+                    return self.show(request, previous, form=form)
+                store_revision(act, content)
+            act.is_posted = action == 'post'
+            act.revision += 1
+            act.save(update_fields=['date_of_act', 'master', 'is_posted', 'revision', 'document_file'])
+        return redirect(f'/objects/{object_id}/acts/{act.pk}/?saved=1')

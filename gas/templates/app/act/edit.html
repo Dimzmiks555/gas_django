@@ -1,0 +1,40 @@
+{% extends 'components/base.html' %}
+{% load static %}
+{% block title %}Акт № {{ act.act_number }}{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'act-dialog.css' %}">
+<main class="act-editor" data-act-id="{{ act.pk }}" {% if saved %}data-act-saved{% endif %}>
+    <form method="post" action="{% url 'act-edit' act.object_id act.pk %}">
+        {% csrf_token %}
+        <header class="act-editor-header">
+            <div>
+                <h1 class="title is-4">Акт № {{ act.act_number }}</h1>
+                <span class="tag {% if act.is_posted %}is-success{% else %}is-light{% endif %}">{% if act.is_posted %}Проведён{% else %}Не проведён{% endif %}</span>
+                {% if act.to_edit %}<span class="tag is-warning">Помечен на редактирование</span>{% endif %}
+            </div>
+            <div class="buttons">
+                <a class="button" href="/download/act/{{ act.pk }}/">Скачать файл</a>
+                {% if not act.is_posted %}<button class="button is-success" name="action" value="post" type="submit">Провести</button>{% endif %}
+                <button class="button" type="button" data-close-act aria-label="Закрыть окно акта">Закрыть</button>
+            </div>
+        </header>
+        {% if error %}<div class="notification is-danger" role="alert">{{ error }}</div>{% endif %}
+        {% if saved %}<div class="notification is-success" role="status">Изменения сохранены.</div>{% endif %}
+        <p class="mb-4">Объект № {{ act.object_id }} · Сумма: <strong>{{ act.total }} ₽</strong></p>
+        {% if act.is_posted %}
+            <dl><dt>Дата акта</dt><dd class="mb-4">{{ act.date_of_act }}</dd>
+                <dt>Мастер</dt><dd class="mb-4">{{ act.master }}</dd></dl>
+            <p class="mb-4">Акт проведён. Исправления вносит администратор через Django-админку.</p>
+            <button class="button is-warning" name="action" value="mark" type="submit" {% if act.to_edit %}disabled{% endif %}>Пометить на редактирование</button>
+        {% else %}
+            {{ form.non_field_errors }}
+            {{ form.revision }}
+            <div class="field"><label class="label" for="{{ form.date_of_act.id_for_label }}">Дата акта</label>{{ form.date_of_act }}{{ form.date_of_act.errors }}</div>
+            <div class="field"><label class="label" for="{{ form.master.id_for_label }}">Мастер</label>{{ form.master }}{{ form.master.errors }}
+                <p class="help">Можно сохранить без мастера. Для проведения выберите мастера.</p></div>
+            <footer class="mt-5"><button class="button is-primary" name="action" value="save" type="submit">Сохранить</button></footer>
+        {% endif %}
+    </form>
+</main>
+<script src="{% static 'act-dialog.js' %}" defer></script>
+{% endblock %}

@@ -1,6 +1,10 @@
 {% extends 'components/layout.html' %}
 
 {% block main %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'act-dialog.css' %}">
+<dialog class="act-dialog" data-act-dialog aria-label="Редактирование акта"><iframe title="Редактирование акта"></iframe></dialog>
+<script src="{% static 'act-dialog.js' %}" defer></script>
 <a href="/objects" class="button mb-4">Назад</a>
 {% if object.to_edit %}
 <h3 class="ml-5 tag is-warning to_edit_mark">Помечен на редактирование! </h3>
@@ -84,7 +88,9 @@
                 <h2 class="title">Акты выполненных работ</h2>
                 {% if object.act_set.count > 0 %}
                     {% for act in object.act_set.all %}
-                        <a class="title is-5 link" href="/download/act/{{act.pk}}">Акт № {{act.act_number}} от {{act.date_of_act}}</a>
+                        <a class="title is-5 link {% if act.is_posted %}act-link-posted{% endif %}" href="{% url 'act-edit' object.pk act.pk %}" data-open-act="{{ act.pk }}">Акт № {{act.act_number}} от {{act.date_of_act}}</a>
+                        <span class="tag {% if act.is_posted %}is-success{% else %}is-light{% endif %}">{% if act.is_posted %}Проведён{% else %}Не проведён{% endif %}</span>
+                        {% if act.to_edit %}<span class="tag is-warning">Помечен на редактирование</span>{% endif %}
                         <p class="subtitle is-5 mb-2">Сумма {{act.total}}</p>
                         <!-- {% if contract.status != 'active' %}
                             <a href="/objects/{{object.id}}/contract/create" class="button mt-2">Добавить</a>
