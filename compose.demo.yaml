@@ -1,0 +1,21 @@
+name: gas-demo
+services:
+  web:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - demo_data:/data
+    networks:
+      edge:
+        aliases: [gas-demo-web]
+    logging:
+      options:
+        max-size: 10m
+        max-file: '3'
+networks:
+  edge:
+    external: true
+    name: doverie_default
+volumes:
+  demo_data:

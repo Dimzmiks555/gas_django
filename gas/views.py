@@ -499,7 +499,9 @@ def DownloadContractView(request, id):
 
     print(contract_name)
 
-    file_path = str(settings.GENERATED_DOCS_ROOT / contract_name)
+    file_path = settings.GENERATED_DOCS_ROOT / f'contract-{actual_contract.uuid_number}.docx'
+    if not file_path.exists():
+        file_path = settings.GENERATED_DOCS_ROOT / contract_name
 
     print(file_path)
 
@@ -507,7 +509,7 @@ def DownloadContractView(request, id):
         with open(file_path, 'rb') as fh:
             # response = HttpResponse(fh.read(), content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             # response['Content-Disposition'] = 'attachment; filename=' + contract_name
-            response = FileResponse(open(file_path, 'rb'), as_attachment=True)
+            response = FileResponse(open(file_path, 'rb'), as_attachment=True, filename=contract_name)
             
 
             return response
@@ -526,7 +528,9 @@ def DownloadActView(request, uuid_number):
 
     print(act_name)
 
-    file_path = str(settings.GENERATED_DOCS_ROOT / act_name)
+    file_path = settings.GENERATED_DOCS_ROOT / f'act-{actual_act.uuid_number}.docx'
+    if not file_path.exists():
+        file_path = settings.GENERATED_DOCS_ROOT / act_name
 
     print(file_path)
 
@@ -534,7 +538,7 @@ def DownloadActView(request, uuid_number):
         with open(file_path, 'rb') as fh:
             # response = HttpResponse(fh.read(), content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
             # response['Content-Disposition'] = 'attachment; filename=' + contract_name
-            response = FileResponse(open(file_path, 'rb'), as_attachment=True)
+            response = FileResponse(open(file_path, 'rb'), as_attachment=True, filename=act_name)
             
 
             return response

@@ -1,0 +1,13 @@
+
+gas.evmrussia.ru {
+    encode zstd gzip
+    header X-Robots-Tag "noindex, nofollow"
+    @blocked path /admin* /import* /objects/*/to_edit
+    respond @blocked 403
+    @writes {
+        not method GET HEAD OPTIONS
+        not path /accounts/login/ /accounts/logout/
+    }
+    respond @writes "Демонстрация: изменения отключены" 403
+    reverse_proxy gas-demo-web:8000
+}
