@@ -13,7 +13,7 @@
                 {% if act.to_edit %}<span class="tag is-warning">Помечен на редактирование</span>{% endif %}
             </div>
             <div class="buttons">
-                <a class="button" href="/download/act/{{ act.pk }}/">Скачать файл</a>
+                <a class="button" href="/download/act/{{ act.pk }}/" target="_top">Скачать файл</a>
                 {% if not act.is_posted %}<button class="button is-success" name="action" value="post" type="submit">Провести</button>{% endif %}
                 <button class="button" type="button" data-close-act aria-label="Закрыть окно акта">Закрыть</button>
             </div>

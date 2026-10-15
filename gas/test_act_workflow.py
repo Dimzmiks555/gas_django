@@ -110,6 +110,7 @@ class ActWorkflowTests(TestCase):
         act = self.create_act()
         response = self.client.get(f'/objects/{self.obj.pk}/acts/{act.pk}/')
         self.assertEqual(response.headers['X-Frame-Options'], 'SAMEORIGIN')
+        self.assertContains(response, f'href="/download/act/{act.pk}/" target="_top"')
 
     def test_admin_can_correct_posted_act_and_document(self):
         act = self.create_act(self.master.pk)
