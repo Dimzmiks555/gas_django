@@ -115,6 +115,13 @@ class Contract(models.Model):
 
  
 
+class FormSubmission(models.Model):
+    key = models.CharField(primary_key=True, max_length=32)
+    digest = models.CharField(max_length=64)
+    result_url = models.TextField(default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class Act(models.Model):
     object = models.ForeignKey(Object, on_delete = models.CASCADE, blank=True, null=True)
     master = models.ForeignKey(Master, on_delete=models.PROTECT, verbose_name="Мастер")

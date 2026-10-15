@@ -3,9 +3,25 @@ import datetime
 from pathlib import Path
 from django.conf import settings
 import uuid
+import os
+import tempfile
 from .models import Price 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def save_document(document, kind, identifier):
+    """Publish a complete file under a collision-free name; never a partial DOCX."""
+    destination = settings.GENERATED_DOCS_ROOT / f'{kind}-{identifier}.docx'
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=settings.GENERATED_DOCS_ROOT, suffix='.tmp', delete=False) as stream:
+            temporary = Path(stream.name)
+            document.save(stream)
+        os.replace(temporary, destination)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
 def generate_docx(data, uuid):
 
@@ -13,7 +29,7 @@ def generate_docx(data, uuid):
 
     contract = DocxTemplate(BASE_DIR / "docx/contract.docx")
     contract.render(data)
-    contract.save(settings.GENERATED_DOCS_ROOT / f"Договор № {data['contract_number']} от {data['date_day']}.{data['date_month']}.{data['date_year']}.docx")
+    save_document(contract, 'contract', uuid_number)
     
     # act = DocxTemplate(BASE_DIR / "docx/act.docx")
     # act.render(data)
@@ -33,7 +49,7 @@ def generate_act(data, uuid):
 
     act = DocxTemplate(BASE_DIR / "docx/act.docx")
     act.render(data)
-    act.save(settings.GENERATED_DOCS_ROOT / f"Акт № {data['act_number']} от {data['date_day']}.{data['date_month']}.{data['date_year']}.docx")
+    save_document(act, 'act', uuid_number)
    
 
 def transform_date_month(date, separator):
