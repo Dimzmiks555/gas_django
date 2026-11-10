@@ -62,3 +62,30 @@ class SeparateSafetyDevicePricesTests(TestCase):
         self.assertIn('Техническое обслуживание электромагнитного клапана (при наличии)', text)
         self.assertIn('с учетом НДС', text)
         self.assertNotIn('{{', text)
+
+    def test_act_lists_instruction_without_water_heater_row(self):
+        from io import BytesIO
+        from django.conf import settings
+        from docxtpl import DocxTemplate
+        from docx import Document
+        heater = DeviceType.objects.create(name='Колонка')
+        Price.objects.filter(name='Техническое обслуживание газовой колонки').update(type=heater, price=1065)
+        Price.objects.filter(name='Инструктаж потребителя газа').update(price=172)
+        prices = self.calculate([heater])
+        total = sum(p['total'] for p in prices.values())
+        self.assertEqual(total, Decimal('1237'))
+        doc = DocxTemplate(settings.BASE_DIR / 'docx/act.docx')
+        doc.render({'prices': prices, 'summ': total})
+        output = BytesIO()
+        doc.save(output)
+        output.seek(0)
+        rows = [[cell.text.strip() for cell in row.cells] for row in Document(output).tables[0].rows]
+        self.assertFalse(any('Техническое обслуживание газовой колонки' in row[0] for row in rows))
+        for name, price in [('Инструктаж потребителя газа', '172')]:
+            with self.subTest(service=name):
+                matches = [r for r in rows if r[0] == name]
+                self.assertEqual(len(matches), 1)
+                self.assertEqual(matches[0][1], '1')
+                self.assertIn(price, matches[0][2])
+                self.assertIn(price, matches[0][3])
+        self.assertIn('1237', rows[-1][0])

@@ -1,0 +1,9 @@
+{% extends 'components/layout.html' %}
+{% load static %}
+{% block title %}Акт № {{ act.act_number }}{% endblock %}
+{% block main %}
+<link rel="stylesheet" href="{% static 'act-dialog.css' %}">
+<div class="box act-detail-page">
+{% include 'app/act/editor.html' %}
+</div>
+{% endblock %}

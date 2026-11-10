@@ -1,7 +1,7 @@
 {% load static%}
 
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="ru" data-theme="light">
 {% load pwa %}
 {% progressive_web_app_meta %}
 <head>
@@ -12,6 +12,8 @@
     <link rel="icon" type="image/x-icon" href="{% static "favicon.ico" %}">
     <link rel="stylesheet" href="{% static "bulma.min.css" %}">
     <link rel="stylesheet" href="{% static "style.css" %}">
+    <link rel="stylesheet" href="{% static 'responsive.css' %}">
+    <script src="{% static 'responsive.js' %}" defer></script>
 </head>
 <body >
     {% block content %}{% endblock content %}

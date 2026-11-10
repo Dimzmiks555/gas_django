@@ -33,14 +33,14 @@ class PassportCreateForm(forms.ModelForm):
  
 
 class ContractCreateForm(forms.ModelForm):
-    date = forms.DateField(label='Дата',widget=forms.SelectDateWidget(years=range(2024, 2050)))
+    date = forms.DateField(label='Дата', initial=datetime.date.today, widget=forms.SelectDateWidget(years=range(2024, 2050)))
     class Meta:
         model = Contract
         fields = ['contract_number', 'date']
 
 
 class ActCreateForm(forms.ModelForm):
-    date = forms.DateField(label='Дата',widget=forms.SelectDateWidget(years=range(2024, 2050)))
+    date = forms.DateField(label='Дата', initial=datetime.date.today, widget=forms.SelectDateWidget(years=range(2024, 2050)))
     class Meta:
         model = Act
         fields = ['act_number', 'date', 'master']
@@ -91,3 +91,39 @@ class ActEditForm(forms.ModelForm):
         fields = ['date_of_act', 'master']
         widgets = {'date_of_act': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date', 'class': 'input'}),
                    'master': forms.Select(attrs={'class': 'input'})}
+
+
+class ActFilterForm(forms.Form):
+    number = forms.CharField(label='Номер акта', required=False)
+    object_id = forms.IntegerField(label='Номер объекта', required=False, min_value=1)
+    address = forms.CharField(label='Адрес', required=False)
+    date_from = forms.DateField(label='Дата с', required=False, widget=forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'))
+    date_to = forms.DateField(label='Дата по', required=False, widget=forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'))
+    master = forms.ChoiceField(label='Мастер', required=False)
+    status = forms.ChoiceField(label='Статус', required=False, choices=[('', 'Все'), ('unposted', 'Не проведён'), ('posted', 'Проведён')])
+    to_edit = forms.BooleanField(label='Только помеченные на редактирование', required=False)
+
+    def __init__(self, *args, **kwargs):
+        from .models import Master
+        super().__init__(*args, **kwargs)
+        self.fields['master'].choices = [('', 'Все'), ('none', 'Не назначен')] + [(str(m.pk), str(m)) for m in Master.objects.order_by('lastname', 'firstname')]
+        for field in self.fields.values():
+            if not isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs['class'] = 'input'
+
+    def clean(self):
+        data = super().clean()
+        if data.get('date_from') and data.get('date_to') and data['date_from'] > data['date_to']:
+            self.add_error('date_to', 'Конечная дата должна быть не раньше начальной.')
+        return data
+
+
+class ObjectVisitTypeForm(forms.ModelForm):
+    class Meta:
+        model = Object
+        fields = ['visit_type']
+        widgets = {'visit_type': forms.Select(attrs={'class': 'input'})}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['visit_type'].choices = [('', 'Не указано')] + list(Object.VisitType.choices)

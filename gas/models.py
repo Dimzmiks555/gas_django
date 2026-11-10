@@ -16,6 +16,12 @@ TYPE_OF_MALE = ({
 })
 
 class Object(models.Model):
+    class VisitType(models.TextChoices):
+        INITIAL = 'initial', 'Первичный'
+        RENEWAL = 'renewal', 'Продление'
+        NEW_OWNER = 'new_owner', 'Новый собственник'
+
+    visit_type = models.CharField(max_length=16, choices=VisitType.choices, blank=True, default='', verbose_name='Тип обращения')
     type_of_building = models.CharField(max_length=255, verbose_name="Тип домовладения", choices=TYPE_OF_BUILDING__CHOICES)
     region = models.CharField(max_length=255, verbose_name="Область")
     area = models.CharField(max_length=255, verbose_name="Район")

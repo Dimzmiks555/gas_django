@@ -13,7 +13,7 @@ import os
 from django.conf import settings
 from django.http import HttpResponse, Http404, FileResponse
 from django.core.exceptions import ValidationError
-from .forms import ActEditForm
+from .forms import ActEditForm, ObjectVisitTypeForm
 from .act_documents import document_path, initials, prepare_revision, store_revision
 
 
@@ -29,7 +29,20 @@ class Login(LoginView):
 def Index(request):
     return redirect('/objects')
 
-class ObjectListView(LoginRequiredMixin, ListView):
+class PaginatedListView(LoginRequiredMixin, ListView):
+    paginate_by = 50
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.copy()
+        query.pop('page', None)
+        context['filter_query'] = query.urlencode()
+        context['total'] = context['paginator'].count
+        context['page_numbers'] = context['paginator'].get_elided_page_range(context['page_obj'].number, on_each_side=2, on_ends=1)
+        return context
+
+
+class ObjectListView(PaginatedListView):
     template_name = "app/object/list.html"
     model = Object
 
@@ -87,16 +100,8 @@ class ObjectListView(LoginRequiredMixin, ListView):
 
         # print(last_name)
 
-        return Object.objects.filter(Q(**filter_object)).order_by('-pk').distinct()
+        return Object.objects.filter(Q(**filter_object)).order_by('-pk').distinct().prefetch_related('client_set', 'objectdevice_set__type')
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['device_formset'] = ObjectDeviceFormSet(queryset=ObjectDevice.objects.none())
-        if self.object_list:
-            context['total'] = self.object_list.count()
-        else:
-            context['total'] = 0
-        return context
 
 
 class ObjectCreateView(LoginRequiredMixin, TemplateView):
@@ -237,8 +242,24 @@ class ObjectIdView(LoginRequiredMixin, DetailView):
     pk_url_kwarg = 'id'
     template_name = "app/object/id.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['visit_type_form'] = ObjectVisitTypeForm(instance=self.object)
+        return context
+
 
     
+
+
+class ObjectVisitTypeView(LoginRequiredMixin, View):
+    def post(self, request, id):
+        obj = get_object_or_404(Object, pk=id)
+        form = ObjectVisitTypeForm(request.POST, instance=obj)
+        if not form.is_valid():
+            return render(request, 'app/object/id.html', {'object': obj, 'visit_type_form': form})
+        obj.visit_type = form.cleaned_data['visit_type']
+        obj.save(update_fields=['visit_type'])
+        return redirect(f'/objects/{obj.pk}')
 
 
 class ActCreateFromContractView(LoginRequiredMixin, TemplateView):
@@ -560,14 +581,14 @@ class ActEditView(LoginRequiredMixin, View):
     def show(self, request, act, form=None, error=None):
         form = form or ActEditForm(instance=act, initial={'revision': act.revision})
         response = render(request, self.template_name, {'act': act, 'form': form, 'error': error,
-                      'saved': request.GET.get('saved') == '1'})
+                      'saved': request.GET.get('saved') == '1', 'standalone': getattr(self, 'standalone', False)})
         response['X-Frame-Options'] = 'SAMEORIGIN'
         return response
 
-    def get(self, request, object_id, act_id):
+    def get(self, request, act_id, object_id=None):
         return self.show(request, self.get_act(object_id, act_id))
 
-    def post(self, request, object_id, act_id):
+    def post(self, request, act_id, object_id=None):
         # SubmissionMiddleware holds the write transaction before this read.
         act = self.get_act(object_id, act_id)
         action = request.POST.get('action')
@@ -599,4 +620,52 @@ class ActEditView(LoginRequiredMixin, View):
             act.is_posted = action == 'post'
             act.revision += 1
             act.save(update_fields=['date_of_act', 'master', 'is_posted', 'revision', 'document_file'])
-        return redirect(f'/objects/{object_id}/acts/{act.pk}/?saved=1')
+        return redirect(f'{request.path}?saved=1')
+
+
+class ActDetailView(ActEditView):
+    template_name = 'app/act/detail.html'
+    standalone = True
+
+    def get_act(self, object_id, act_id):
+        return get_object_or_404(Act.objects.select_related('master', 'object'), pk=act_id)
+
+
+class ActListView(PaginatedListView):
+    template_name = 'app/act/list.html'
+    model = Act
+
+    def get_queryset(self):
+        from .forms import ActFilterForm
+        self.filter_form = ActFilterForm(self.request.GET)
+        queryset = Act.objects.select_related('object', 'master').order_by('-date_of_act', '-pk')
+        if not self.filter_form.is_valid():
+            return queryset.none()
+        data = self.filter_form.cleaned_data
+        if data['number']:
+            queryset = queryset.filter(act_number__icontains=data['number'])
+        if data['object_id']:
+            queryset = queryset.filter(object_id=data['object_id'])
+        for word in data['address'].split():
+            query = Q()
+            for field in ('region', 'area', 'city', 'street', 'house', 'room'):
+                query |= Q(**{f'object__{field}__icontains': word})
+            queryset = queryset.filter(query)
+        if data['date_from']:
+            queryset = queryset.filter(date_of_act__gte=data['date_from'])
+        if data['date_to']:
+            queryset = queryset.filter(date_of_act__lte=data['date_to'])
+        if data['master'] == 'none':
+            queryset = queryset.filter(master__isnull=True)
+        elif data['master']:
+            queryset = queryset.filter(master_id=data['master'])
+        if data['status']:
+            queryset = queryset.filter(is_posted=data['status'] == 'posted')
+        if data['to_edit']:
+            queryset = queryset.filter(to_edit=True)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = self.filter_form
+        return context

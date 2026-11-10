@@ -1,0 +1,12 @@
+<p class="list-count">{% if total %}Показаны {{ page_obj.start_index }}–{{ page_obj.end_index }} из {{ total }}{% else %}Записей нет{% endif %} · по 50 на странице</p>
+{% if is_paginated %}
+<nav class="pagination-bar" aria-label="Страницы списка">
+    {% if page_obj.has_previous %}<a class="button" href="?{{ filter_query }}&amp;page={{ page_obj.previous_page_number }}" aria-label="Предыдущая страница">Назад</a>{% endif %}
+    {% for number in page_numbers %}
+        {% if number == paginator.ELLIPSIS %}<span aria-hidden="true">…</span>
+        {% elif number == page_obj.number %}<span class="button" aria-current="page" aria-label="Страница {{ number }}">{{ number }}</span>
+        {% else %}<a class="button" href="?{{ filter_query }}&amp;page={{ number }}" aria-label="Страница {{ number }}">{{ number }}</a>{% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}<a class="button" href="?{{ filter_query }}&amp;page={{ page_obj.next_page_number }}" aria-label="Следующая страница">Дальше</a>{% endif %}
+</nav>
+{% endif %}

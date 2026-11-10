@@ -1,0 +1,46 @@
+{% extends 'components/layout.html' %}
+{% block title %}Акты{% endblock %}
+{% block main %}
+<div class="objects_page">
+    <aside class="menu objects__filters">
+        <details class="filter-panel" open>
+            <summary>Фильтры поиска</summary>
+            <form method="get" action="{% url 'act-list' %}">
+                <h3 class="title is-5">Фильтры</h3>
+                {{ filter_form.non_field_errors }}
+                {% for field in filter_form %}
+                <div class="field">
+                    {% if field.name == 'to_edit' %}<label class="checkbox">{{ field }} {{ field.label }}</label>
+                    {% else %}<label class="label" for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% endif %}
+                    {{ field.errors }}
+                </div>
+                {% endfor %}
+                <button class="button is-primary is-fullwidth" type="submit">Найти</button>
+                <a class="button is-fullwidth mt-2" href="{% url 'act-list' %}">Сбросить</a>
+            </form>
+        </details>
+    </aside>
+    <div class="objects__list">
+        <h1 class="title">Акты</h1>
+        <p class="subtitle is-6">Найдено: <strong>{{ total }}</strong></p>
+        {% if object_list %}
+        <table class="objects-table table is-bordered is-striped is-fullwidth is-hoverable">
+            <thead><tr><th>Акт</th><th>Дата</th><th>Объект / адрес</th><th>Мастер</th><th>Сумма</th><th>Статус</th></tr></thead>
+            <tbody>
+            {% for act in object_list %}
+                <tr>
+                    <th scope="row" data-label="Акт"><a href="{% url 'act-detail' act.pk %}">Акт № {{ act.act_number }}</a></th>
+                    <td data-label="Дата">{{ act.date_of_act|date:'d.m.Y' }}</td>
+                    <td data-label="Объект / адрес">{% if act.object %}<a href="/objects/{{ act.object_id }}">Объект № {{ act.object_id }}</a><br>{{ act.object.get_full_address }}{% else %}Не указан{% endif %}</td>
+                    <td data-label="Мастер">{{ act.master|default:'Не назначен' }}</td>
+                    <td data-label="Сумма">{{ act.total }} ₽</td>
+                    <td data-label="Статус"><span class="tag {% if act.is_posted %}is-success{% else %}is-light{% endif %}">{% if act.is_posted %}Проведён{% else %}Не проведён{% endif %}</span>{% if act.to_edit %}<br><span class="tag is-warning">На редактирование</span>{% endif %}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}<p>Акты не найдены.</p>{% endif %}
+        {% include 'components/pagination.html' %}
+    </div>
+</div>
+{% endblock %}

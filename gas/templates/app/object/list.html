@@ -3,6 +3,8 @@
 {% block main %}
 <div class="objects_page">
     <aside class="menu objects__filters">
+        <details class="filter-panel" open>
+        <summary>Фильтры поиска</summary>
         <form>
           <h3 class="title is-5">Фильтры</h3>
           <p class="menu-label">Ключевое лицо</p>
@@ -61,6 +63,7 @@
           <button class="button is-primary is-fullwidth" type="submit">Найти</button>
           <a class="button is-fullwidth mt-2" href="/objects/">Сбросить</a>
         </form>
+        </details>
       </aside>
       <div class="objects__list">
         <nav class="level">
@@ -82,7 +85,7 @@
               {% if object_list.count == 0 %}
                 <p>Ничего не найдено</p>
               {% else %}
-              <table class="table is-bordered is-striped is-fullwidth is-hoverable">
+              <table class="objects-table table is-bordered is-striped is-fullwidth is-hoverable">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -97,28 +100,28 @@
                 {% for object in object_list %}
                 
                   <tr>
-                    <th>
+                    <th scope="row" data-label="Объект №">
                       {% if object.to_edit %}
                       <span class="tag is-warning">{{object.id}}</span>
                       {% else %}
                       {{object.id}}
                       {% endif %}
                     </th>
-                    <td>
+                    <td data-label="Адрес">
                       <a href="/objects/{{object.id}}">{{object.get_full_address}}</a>
                     </td>
-                    <td>
+                    <td data-label="Контактное лицо">
                       {% for client in object.client_set.all %}
                         {{client.lastname}} {{client.firstname}} {{client.middlename}} <br>
                       {% endfor %} 
                     </td>
                     <!-- <td></td> -->
-                    <td>
+                    <td data-label="Телефон">
                       {% for client in object.client_set.all %}
                       {{client.phone_number_1}}<br>{{client.phone_number_2}} <br> {{client.phone_number_3}}
                       {% endfor %} 
                     </td>
-                    <td>
+                    <td data-label="Оборудование">
                       {% for device in object.objectdevice_set.all %}
                         {{device.type}} {{device.words_in_contract}}<br> 
                       {% endfor %} 
@@ -130,26 +133,7 @@
               </table>
               {% endif %}
               
-          <!-- <nav class="pagination is-rounded" role="navigation" aria-label="pagination">
-            <a href="#" class="pagination-previous">Назад</a>
-            <a href="#" class="pagination-next">Дальше</a>
-            <ul class="pagination-list">
-              <li><a href="#" class="pagination-link" aria-label="Goto page 1">1</a></li>
-              <li><span class="pagination-ellipsis">&hellip;</span></li>
-              <li><a href="#" class="pagination-link" aria-label="Goto page 45">45</a></li>
-              <li>
-                <a
-                  class="pagination-link is-current"
-                  aria-label="Page 46"
-                  aria-current="page"
-                  >46</a
-                >
-              </li>
-              <li><a href="#" class="pagination-link" aria-label="Goto page 47">47</a></li>
-              <li><span class="pagination-ellipsis">&hellip;</span></li>
-              <li><a href="#" class="pagination-link" aria-label="Goto page 86">86</a></li>
-            </ul>
-          </nav> -->
+          {% include 'components/pagination.html' %}
       </div>
 </div>
 {% endblock main %}

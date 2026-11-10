@@ -17,12 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include  
 from gas.views import Index, ObjectCreateView, ObjectIdView, ObjectListView, ContractCreateView, ActCreateFromContractView, ToEditObject, EditCommentObject, AddContactView, DownloadContractView, DownloadActView
-from gas.views import ActEditView
+from gas.views import ActEditView, ActListView, ActDetailView, ObjectVisitTypeView
+from gas.exports import export_page, export_download
 from old.views import imp
 from django.conf import settings
 
 
 urlpatterns = [
+    path('export/', export_page, name='export'),
+    path('export/<str:kind>/', export_download, name='export-download'),
+    path('objects/<int:id>/visit-type/', ObjectVisitTypeView.as_view(), name='object-visit-type'),
+    path('acts/', ActListView.as_view(), name='act-list'),
+    path('acts/<uuid:act_id>/', ActDetailView.as_view(), name='act-detail'),
     path('objects/<int:object_id>/acts/<uuid:act_id>/', ActEditView.as_view(), name='act-edit'),
     path('admin/', admin.site.urls),
     path("", Index),

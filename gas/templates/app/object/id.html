@@ -19,6 +19,13 @@
                 <h2 class="subtitle is-6 is-spaced">{{object.type_of_building}}</h2>
                 <p class="title is-5">Адрес</p>
                 <h2 class="subtitle is-6 is-spaced">{{object.get_full_address}}</h2>
+                <form class="mb-5" action="{% url 'object-visit-type' object.pk %}" method="post">
+                    {% csrf_token %}
+                    <label class="label" for="{{ visit_type_form.visit_type.id_for_label }}">Тип обращения</label>
+                    {{ visit_type_form.visit_type }}
+                    {{ visit_type_form.visit_type.errors }}
+                    <button class="button is-fullwidth mt-2 is-primary" type="submit">Сохранить тип обращения</button>
+                </form>
                 <p class="title is-5 ">Примечание</p>
                 <form action="/objects/{{object.id}}/edit_comment" method="post">
                     {% csrf_token %}
@@ -113,6 +120,7 @@
         <div class="column">
             <div class="box">
                 <h2 class="title">Оборудование</h2>
+                <div class="table-scroll" role="region" aria-label="Оборудование объекта — таблица с прокруткой" tabindex="0">
                 <table class="object_devices__table">
                     <tr>
                         <th>Оборудование</th>
@@ -139,6 +147,7 @@
                     </tr>
                     {% endfor %}
                 </table>
+                </div>
             </div>
         </div>
     </div>

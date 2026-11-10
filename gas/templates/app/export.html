@@ -1,0 +1,18 @@
+{% extends 'components/layout.html' %}
+{% block title %}Экспорт{% endblock %}
+{% block main %}
+<div class="container p-4">
+  <h1 class="title">Экспорт</h1>
+  <div class="box">
+    <h2 class="title is-5">Все акты</h2>
+    <p class="mb-4">ZIP-архив: реестр Excel со всеми актами, включая непроведённые, и папка с сохранёнными файлами актов.</p>
+    <a class="button is-primary" href="{% url 'export-download' 'acts' %}">Экспорт всех актов</a>
+  </div>
+  <div class="box">
+    <h2 class="title is-5">Все объекты с документами</h2>
+    <p class="mb-4">ZIP-архив: Excel с объектами, клиентами, оборудованием, актами и договорами. Документы разложены по папкам объектов.</p>
+    <a class="button is-primary is-multiline" style="height:auto;white-space:normal" href="{% url 'export-download' 'objects' %}">Экспорт всех объектов с документами</a>
+  </div>
+  <p>В Excel указан путь к каждому документу в архиве. Отсутствующие файлы отмечены в реестре. Формирование большого архива может занять некоторое время.</p>
+</div>
+{% endblock %}
